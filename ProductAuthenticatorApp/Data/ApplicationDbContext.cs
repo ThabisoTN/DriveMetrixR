@@ -9,5 +9,6 @@ namespace ProductAuthenticatorApp.Data
             : base(options)
         {
         }
+        public DbSet<UserType> UserTypes { get; set; }
     }
 }
