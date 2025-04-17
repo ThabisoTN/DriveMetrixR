@@ -47,9 +47,14 @@ namespace ProductAuthenticatorApp.Data
                         new UserType { UserTypeName = "Individual" },
                         new UserType { UserTypeName = "Organization" }
                     };
-
                     await dbContext.UserTypes.AddRangeAsync(userTypes);
                     await dbContext.SaveChangesAsync();
+
+                    Console.WriteLine("UserType Saved To database");
+                }
+                else
+                {
+                    Console.WriteLine("UserTypes Already Exist In the Database");
                 }
             }
             catch (Exception ex)

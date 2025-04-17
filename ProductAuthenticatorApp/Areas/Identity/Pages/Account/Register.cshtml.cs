@@ -2,24 +2,17 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Data.Entity;
-using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 using ProductAuthenticatorApp.Data;
 
 namespace ProductAuthenticatorApp.Areas.Identity.Pages.Account
@@ -79,8 +72,12 @@ namespace ProductAuthenticatorApp.Areas.Identity.Pages.Account
         /// </summary>
         public class InputModel
         {
+            [Required]
+            [Display(Name = "First Name")]
             public string Firstname { set; get; }
 
+            [Required]
+            [Display(Name = "Last Name")]
             public string Lastname { set; get; }
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -109,7 +106,8 @@ namespace ProductAuthenticatorApp.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
-
+            [Required]
+            [Display(Name = "User Type")]
             public int UserTypeId { set;get; }
         }
 
@@ -119,7 +117,7 @@ namespace ProductAuthenticatorApp.Areas.Identity.Pages.Account
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
-            var getUserTypes = await _dbContext.UserTypes
+            UserTypes = await _dbContext.UserTypes
                 .Select(ut=> new SelectListItem
                 {
                     Value=ut.Id.ToString(),
@@ -134,16 +132,7 @@ namespace ProductAuthenticatorApp.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser
-                {
-                    Firstname=Input.Firstname,
-                    Lastname=Input.Lastname,    
-                    UserName = Input.Email,
-                    Email = Input.Email,
-                    UserTypeId=Input.UserTypeId,
-                 
-              
-                };
+                var user=CreateUser();
 
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
@@ -190,7 +179,12 @@ namespace ProductAuthenticatorApp.Areas.Identity.Pages.Account
         {
             try
             {
-                return Activator.CreateInstance<ApplicationUser>();
+                var user= Activator.CreateInstance<ApplicationUser>();
+                user.Firstname=Input.Firstname;
+                user.Lastname=Input.Lastname;
+                user.UserTypeId= Input.UserTypeId;
+
+                return user;
             }
             catch
             {
