@@ -1,34 +1,60 @@
-﻿namespace ProductAuthenticatorApp.Data
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace ProductAuthenticatorApp.Data
 {
     public class DbInitializer
     {
-        public async void SeedUserType(ApplicationDbContext dbContext)
+        public static async Task SeedRoles(RoleManager<IdentityRole> roleManager)
         {
             try
             {
-                dbContext.Database.EnsureCreated();
+                var roles = new[] { "Admin" };
 
-                if (!dbContext.UserTypes.Any())
+                foreach (var roleName in roles)
                 {
-                    string[] Usertypes = { "Personal", "Organazation" };
-                  
-
-                    foreach (string usertype in Usertypes)
+                    if (!await roleManager.RoleExistsAsync(roleName))
                     {
-                        //dbContext.UserTypes.Add(Usertypes);
-                        Console.WriteLine($"{usertype} Added");
+                        var role = new IdentityRole(roleName);
+                        var result = await roleManager.CreateAsync(role);
+                        if (!result.Succeeded)
+                        {
+                            Console.WriteLine($"Error creating role {roleName}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Roles Seeded Successfully");
+                        }
                     }
-
-                    await dbContext.SaveChangesAsync();
-                }
-                else
-                {
-                    Console.WriteLine($"User Types Aready Exist");
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error Occured When Trying To Seed UserTypes!!!  : {ex.Message}");
+                Console.WriteLine($"Error Occured When Trying To Seed Roles : {ex.Message}");
+            }
+        }
+
+
+
+        //Seed Type Of user
+        public async static Task SeedUserType(ApplicationDbContext dbContext)
+        {
+            try
+            {
+                if (!dbContext.UserTypes.Any())
+                {
+                    var userTypes = new List<UserType>
+                    {
+                        new UserType { UserTypeName = "Individual" },
+                        new UserType { UserTypeName = "Organization" }
+                    };
+
+                    await dbContext.UserTypes.AddRangeAsync(userTypes);
+                    await dbContext.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error Occured When trying To Seed UserTypes : {ex.Message}");   
             }
         }
     }
