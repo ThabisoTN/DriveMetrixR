@@ -10,7 +10,8 @@ namespace ProductAuthenticatorApp.Data
         {
         }
         public DbSet<ApplicationUser> applicationUsers { set; get; }
-
         public DbSet<UserType> UserTypes { get; set; }
+        public DbSet<ProductCategory> ProductCategories { get; set; }
+        public DbSet<Product> Products { set; get; }
     }
 }

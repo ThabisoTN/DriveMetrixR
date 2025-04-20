@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ProductAuthenticatorApp.Data;
+using ProductAuthenticatorApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,10 +15,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-           .AddRoles<IdentityRole>()
-           .AddEntityFrameworkStores<ApplicationDbContext>();
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
+
+
+//register Sevices
+//builder.Services.AddScoped<IProductService, ProductService>();
 
 
 
@@ -39,6 +43,8 @@ using (var scope = app.Services.CreateScope())
 
         await DbInitializer.SeedRoles(roleManager);
         await DbInitializer.SeedUserType(context);
+        await DbInitializer.SeedAdmin(context, userManager);
+        await DbInitializer.SeedProductcategory(context);
     }
     catch (Exception ex)
     {

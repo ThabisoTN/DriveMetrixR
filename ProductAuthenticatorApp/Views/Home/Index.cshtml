@@ -1,8 +1,48 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "AuthoScan - Product Authentication Made Simple";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<!-- Add barcode font -->
+<link href="https://fonts.googleapis.com/css2?family=Libre+Barcode+128&display=swap" rel="stylesheet">
+<!-- Add icon library -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="~/css/Home.css"/>
+
+<div class="scanner-container">
+    <div class="scanner-header">
+        <i class="fas fa-qrcode"></i> Product Authentication Scanner
+    </div>
+    <div class="scanner-body">
+        <div class="scanner-animation">
+            <div class="scanner-viewfinder"></div>
+            <div class="scanner-grid"></div>
+            <div class="scanner-laser"></div>
+            <div class="scanner-reflection"></div>
+
+            <!-- Simulated product barcode that appears when scanned -->
+            <div class="scanned-barcode" style="
+                position: absolute;
+                width: 80%;
+                height: 30%;
+                background: white;
+                display: none;
+                align-items: center;
+                justify-content: center;
+                font-family: 'Libre Barcode 128', cursive;
+                font-size: 2rem;
+                color: black;
+                animation: flicker 0.5s infinite alternate;
+            ">
+                AUTHSCAN-2023
+            </div>
+        </div>
+        <div class="barcode-display">AUTHSCAN-2023</div>
+        <p class="scan-instructions">Point your camera at any product to verify if it belong to you or not...</p>
+        <a href="/Product" class="cta-button">
+            <i class="fas fa-play"></i> FindIT
+        </a>
+    </div>
 </div>
+
+<script src="~/js/Home.js">
+</script>

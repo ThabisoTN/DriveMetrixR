@@ -1,0 +1,154 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuthoScan | Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="~/css/UserdashBoard.css" />
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="fas fa-qrcode logo-icon"></i>
+                <h1>AuthoScan</h1>
+            </div>
+
+            <nav class="main-nav">
+                <ul>
+                    <li class="active">
+                        <a href="#">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fas fa-box-open"></i>
+                            <span>Products</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fas fa-qrcode"></i>
+                            <span>Scan History</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="user-profile">
+                <div class="avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-info">
+                    <span class="username">John Doe</span>
+                    <span class="user-role">Individual Account</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="content-header">
+                <h2>Dashboard</h2>
+                <div class="header-actions">
+                    <a class="btn btn-primary" id="addProductBtn" href="@Url.Action("AddProduct", "User")">
+                        <i class="fas fa-plus"></i> Add Product
+                    </a>
+                </div>
+            </header>
+
+            <div class="content-body">
+                <div class="welcome-card">
+                    <div class="welcome-text">
+                        <h3>Welcome back, John!</h3>
+                        <p>You have 12 authenticated products in your inventory. Last scan was 2 days ago.</p>
+                    </div>
+                    <div class="welcome-image">
+                        <img src="https://illustrations.popsy.co/amber/digital-nomad.svg" alt="Authentication Illustration" style="height: 120px;">
+                    </div>
+                </div>
+
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-boxes"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value">12</span>
+                            <span class="stat-label">Total Products</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-qrcode"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value">24</span>
+                            <span class="stat-label">Total Scans</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value">22</span>
+                            <span class="stat-label">Verified Scans</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value">2</span>
+                            <span class="stat-label">Flagged Scans</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-scans">
+                    <h3>Recent Scan Activity</h3>
+                    <div class="scan-table">
+                        <div class="scan-table-header">
+                            <span>Product</span>
+                            <span>Scan Time</span>
+                            <span>Location</span>
+                            <span>Status</span>
+                        </div>
+                        <div class="scan-table-row">
+                            <span>Laptop - Dell XPS 15</span>
+                            <span>2 days ago</span>
+                            <span>Nairobi, Kenya</span>
+                            <span class="status verified">Verified</span>
+                        </div>
+                        <div class="scan-table-row">
+                            <span>Smartphone - iPhone 13</span>
+                            <span>1 week ago</span>
+                            <span>Kampala, Uganda</span>
+                            <span class="status verified">Verified</span>
+                        </div>
+                        <div class="scan-table-row">
+                            <span>Camera - Canon EOS R5</span>
+                            <span>2 weeks ago</span>
+                            <span>Unknown</span>
+                            <span class="status flagged">Flagged</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="~/js/UserDashBoard.js"></script>
+</body>
+</html>

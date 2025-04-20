@@ -1,0 +1,50 @@
+﻿@model ProductAuthenticatorApp.Data.Product
+@{
+    ViewData["Title"] = "Add New Product";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="~/css/AddProduct.css" rel="stylesheet" />
+
+
+
+<div class="add-product-container">
+    <div class="add-product-header">
+        <h1 class="add-product-title">@ViewData["Title"]</h1>
+        <p class="add-product-subtitle">Add a new product to your authentication portfolio</p>
+    </div>
+
+    <div id="statusMessage" class="status-message"></div>
+
+    <form id="addProductForm" class="add-product-form">
+        @Html.AntiForgeryToken()
+
+        <input type="hidden" id="UserId" name="UserId" />
+
+        <div class="form-group">
+            <label for="ProductName" class="form-label">Product Name *</label>
+            <input type="text" id="ProductName" name="ProductName" class="form-control" required />
+            <span id="productNameError" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="ProductDescription" class="form-label">Product Description</label>
+            <textarea id="ProductDescription" name="ProductDescription" class="form-control"></textarea>
+            <span id="productDescriptionError" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="SerialNumber" class="form-label">Serial Number *</label>
+            <input type="text" id="SerialNumber" name="SerialNumber" class="form-control" required />
+            <span id="serialNumberError" class="text-danger"></span>
+        </div>
+
+        <button type="submit" id="submitBtn" class="btn-submit">
+            <i class="fas fa-plus"></i> Add Product
+        </button>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="~/js/AddProduct.js"></script>
+}

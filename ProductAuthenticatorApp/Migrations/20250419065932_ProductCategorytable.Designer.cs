@@ -12,8 +12,8 @@ using ProductAuthenticatorApp.Data;
 namespace ProductAuthenticatorApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250417114524_InitialCreate2")]
-    partial class InitialCreate2
+    [Migration("20250419065932_ProductCategorytable")]
+    partial class ProductCategorytable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -236,6 +236,23 @@ namespace ProductAuthenticatorApp.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("ProductAuthenticatorApp.Data.ProductCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CategoryName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProductCategories");
                 });
 
             modelBuilder.Entity("ProductAuthenticatorApp.Data.UserType", b =>

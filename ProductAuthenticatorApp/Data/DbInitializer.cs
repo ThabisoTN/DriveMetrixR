@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Rendering;
+
 
 namespace ProductAuthenticatorApp.Data
 {
@@ -60,6 +62,70 @@ namespace ProductAuthenticatorApp.Data
             catch (Exception ex)
             {
                 Console.WriteLine($"Error Occured When trying To Seed UserTypes : {ex.Message}");   
+            }
+        }
+
+
+        //seed Admin Data 
+        public async static Task SeedAdmin(ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager)
+        {
+            try
+            {
+                var adminData = new ApplicationUser()
+                {
+                    Firstname = "Admin",
+                    Lastname = "Admin",
+                    UserName = "admin@gmail.com",
+                    Email = "admin@gmail.com",
+                    EmailConfirmed = true,
+                    UserTypeId = 1
+                };
+                var result = await userManager.CreateAsync(adminData, "Admin@1234");
+
+                if (result.Succeeded)
+                {
+
+                    await userManager.AddToRoleAsync(adminData, "Admin");
+                    Console.WriteLine("Admin user seeded successfully");
+                }
+                else
+                {
+                    Console.WriteLine($"Error creating admin user: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                    
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error Occured When Trying To Seed Admin data : {ex.Message}" );
+            }
+        }
+
+        //Seed Product Category
+        public async static Task SeedProductcategory( ApplicationDbContext dbContext)
+        {
+            try
+            {
+                if (dbContext.ProductCategories.Any())
+                {
+                    Console.WriteLine("Product Categories Already Exist!!!");
+                }
+                var productCategoryData = new List<ProductCategory>()
+                {
+                    new ProductCategory{CategoryName="Electronic"},
+                    new ProductCategory {CategoryName="Other"}
+                };
+
+                await dbContext.ProductCategories.AddRangeAsync(productCategoryData);
+                await dbContext.SaveChangesAsync();
+
+                Console.WriteLine($"Product category Saved To database {productCategoryData.Count}");
+
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error Occurred When Trying To Seed The Product category : {ex.Message}");
             }
         }
     }
