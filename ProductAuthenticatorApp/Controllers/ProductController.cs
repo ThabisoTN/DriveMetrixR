@@ -4,8 +4,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using NuGet.Protocol.Plugins;
 using ProductAuthenticatorApp.Data;
+using ProductAuthenticatorApp.Service;
 using ProductAuthenticatorApp.Services;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 
 namespace ProductAuthenticatorApp.Controllers
 {
@@ -15,73 +19,100 @@ namespace ProductAuthenticatorApp.Controllers
     public class ProductController : ControllerBase
     {
         private readonly ApplicationDbContext dbContext;
-        private readonly UserManager<ApplicationUser> usermanager;
-       
-        public ProductController(ApplicationDbContext dbContext, UserManager<ApplicationUser> usermanager)
+        private readonly UserManager<ApplicationUser> userManager;
+        private readonly IProductService productService;
+        private readonly ILogger<ProductController> logger;
+
+
+        public ProductController(ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager, IProductService productService, ILogger<ProductController> logger)
         {
             this.dbContext = dbContext;
-            this.usermanager = usermanager;
+            this.userManager = userManager;
+            this.productService = productService;
+            this.logger = logger;
         }
-        //Get Current userId
+
+        //GetUserId
         [HttpGet("GetUserId")]
         public async Task<IActionResult> GetUserId()
         {
             try
             {
-                var userId = usermanager.GetUserId(User);
-
-                if (userId != null)
+                var getUserId = userManager.GetUserId(User);
+                if (getUserId != null)
                 {
-                    return Ok(userId);
+                    return Ok(new { getUserId, Message = "UserId Found", success = true });
                 }
-                return NoContent();
+                
+                return BadRequest();
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                Console.WriteLine($"Error Occured When trying To get Current Logged In UserId {ex.Message}");
-                return BadRequest(ex.Message );
+                logger.LogError(ex.Message);
+                throw new Exception();
             }
         }
 
-        //Add product method
-        [HttpPost("AddProduct")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult>AddProduct([FromBody]Product product)
+        //get Product categories
+        [HttpGet("GetCategories")]
+        public async Task<IActionResult> GetCategories()
         {
             try
             {
-                Console.WriteLine("About Ton Add product To database...");
-                var userId = usermanager.GetUserId(User);
+                var categories = await productService.GetCategories();
 
-                if (userId!=null)
+                if (categories != null)
                 {
-                    var newProduct = new Product
-                    {
-                        ProductName = product.ProductName,
-                        ProductDescription = product.ProductDescription,
-                        SerialNumber = product.SerialNumber,
-                        UserId = userId,                        
-                    };
-
-                    await dbContext.Products.AddAsync(newProduct);
-                    await dbContext.SaveChangesAsync();
-
-                    Console.WriteLine($"{newProduct.ProductName} Added To database");
-                    return Ok(newProduct);
+                    logger.LogInformation("Categories Found");
+                    return Ok(categories);
                 }
-
-                Console.WriteLine("user Id Not valid");
-                return BadRequest("Invalid User Id");
-
+                return NotFound();
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error Occured When Trying To add product to Database : {ex.Message}");
+                logger.LogError(ex.Message, ex);
                 return BadRequest();
             }
         }
 
 
-       
+        //Add product method
+        [HttpPost("AddProduct")]
+        public async Task<IActionResult> AddProduct([FromForm] Product product)
+        {
+            try
+            {
+                var userId = userManager.GetUserId(User);
+
+                if (!ModelState.IsValid)
+                {
+                    logger.LogInformation("Invalid data passed");
+                    return BadRequest();
+
+                }
+
+                if (product == null)
+                {
+                    logger.LogInformation("Product data Not Passed!!!");
+                    return BadRequest("Product data is required.");
+                }
+
+                if (userId!=null)
+                {
+                    logger.LogInformation("About To Add product To database...");
+                    await productService.AddProduct(product, userId);
+                    logger.LogInformation("Product added successfully.");
+                    return Ok(new { Message="product added Successfully", success=true, product});
+                }
+
+                logger.LogInformation("user Id Not valid");
+                return BadRequest("Invalid User Id");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"Error Occured When Trying To add product to Database : {ex.Message}");
+                return BadRequest();
+            }
+        }
     }
 }

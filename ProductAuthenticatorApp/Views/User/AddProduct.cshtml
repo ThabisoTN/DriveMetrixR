@@ -1,12 +1,11 @@
 ﻿@model ProductAuthenticatorApp.Data.Product
+
 @{
     ViewData["Title"] = "Add New Product";
 }
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 <link href="~/css/AddProduct.css" rel="stylesheet" />
-
-
 
 <div class="add-product-container">
     <div class="add-product-header">
@@ -16,35 +15,222 @@
 
     <div id="statusMessage" class="status-message"></div>
 
-    <form id="addProductForm" class="add-product-form">
+    <form method="post" id="addProductForm" class="add-product-form"">
         @Html.AntiForgeryToken()
 
+        <!-- Hidden User ID -->
         <input type="hidden" id="UserId" name="UserId" />
 
+        <!-- Product Name -->
         <div class="form-group">
             <label for="ProductName" class="form-label">Product Name *</label>
             <input type="text" id="ProductName" name="ProductName" class="form-control" required />
             <span id="productNameError" class="text-danger"></span>
         </div>
 
+        <!-- Product Description -->
         <div class="form-group">
             <label for="ProductDescription" class="form-label">Product Description</label>
             <textarea id="ProductDescription" name="ProductDescription" class="form-control"></textarea>
             <span id="productDescriptionError" class="text-danger"></span>
         </div>
 
+        <!-- Serial Number -->
         <div class="form-group">
             <label for="SerialNumber" class="form-label">Serial Number *</label>
-            <input type="text" id="SerialNumber" name="SerialNumber" class="form-control" required />
+            <input type="number" id="SerialNumber" name="SerialNumber" class="form-control" required />
             <span id="serialNumberError" class="text-danger"></span>
         </div>
 
-        <button type="submit" id="submitBtn" class="btn-submit">
+        <!-- MAC Address -->
+        <div class="form-group">
+            <label for="MACAddress" class="form-label">MAC Address</label>
+            <input type="text" id="MACAddress" name="MACAddress" class="form-control" />
+            <span id="macAddressError" class="text-danger"></span>
+        </div>
+
+        <!-- Model Number -->
+        <div class="form-group">
+            <label for="ModelNumber" class="form-label">Model Number</label>
+            <input type="text" id="ModelNumber" name="ModelNumber" class="form-control" />
+            <span id="modelNumberError" class="text-danger"></span>
+        </div>
+
+        <!-- Manufacturer -->
+        <div class="form-group">
+            <label for="Manufacturer" class="form-label">Manufacturer</label>
+            <input type="text" id="Manufacturer" name="Manufacturer" class="form-control" />
+            <span id="manufacturerError" class="text-danger"></span>
+        </div>
+
+        <!-- Color -->
+        <div class="form-group">
+            <label for="Color" class="form-label">Color</label>
+            <input type="text" id="Color" name="Color" class="form-control" />
+            <span id="colorError" class="text-danger"></span>
+        </div>
+
+        <!-- Storage Capacity -->
+        <div class="form-group">
+            <label for="StorageCapacity" class="form-label">Storage Capacity</label>
+            <input type="text" id="StorageCapacity" name="StorageCapacity" class="form-control" />
+            <span id="storageCapacityError" class="text-danger"></span>
+        </div>
+
+        <!-- RAM -->
+        <div class="form-group">
+            <label for="RAM" class="form-label">RAM</label>
+            <input type="text" id="RAM" name="RAM" class="form-control" />
+            <span id="ramError" class="text-danger"></span>
+        </div>
+
+        <!-- Processor Model -->
+        <div class="form-group">
+            <label for="ProcessorModel" class="form-label">Processor Model</label>
+            <input type="text" id="ProcessorModel" name="ProcessorModel" class="form-control" />
+            <span id="processorModelError" class="text-danger"></span>
+        </div>
+
+        <!-- Operating System -->
+        <div class="form-group">
+            <label for="OperatingSystem" class="form-label">Operating System</label>
+            <input type="text" id="OperatingSystem" name="OperatingSystem" class="form-control" required />
+            <span id="operatingSystemError" class="text-danger"></span>
+        </div>
+
+        <!-- Category Dropdown -->
+        <div class="form-group">
+            <label for="CategoryId" class="form-label">Category</label>
+            <select id="CategoryId" name="CategoryId" class="form-control" required>
+                <option value="">-- Select Category --</option>
+            </select>
+            <span id="categoryIdError" class="text-danger"></span>
+        </div>
+
+       @*  <!-- Product Image -->
+        <div class="form-group">
+            <label for="ImageFile" class="form-label">Product Image</label>
+            <input type="file" id="ImageFile" name="imageFile" class="form-control" accept="image/*" />
+            <span id="imageFileError" class="text-danger"></span>
+        </div> *@
+
+        <!-- Submit Button -->
+        <button type="submit" id="submitBtn" class="btn-submit" disabled>
             <i class="fas fa-plus"></i> Add Product
         </button>
     </form>
 </div>
 
 @section Scripts {
-    <script src="~/js/AddProduct.js"></script>
+    <script>
+        let userId = '';
+
+        // Get UserId from the server
+        async function getUserId() {
+            try {
+                console.log('Fetching UserId...');
+                const response = await fetch('/api/Product/GetUserId');
+                if (!response.ok) throw new Error('Failed to get UserId');
+                const data = await response.json();
+
+                console.log('UserId fetched:', data);
+
+                if (data.success && data.getUserId) {
+                    userId = data.getUserId;
+                    document.getElementById('UserId').value = userId;
+                    document.getElementById('submitBtn').disabled = false;
+                    loadCategories(); // Load categories after UserId is retrieved
+                } else {
+                    throw new Error('UserId not found');
+                }
+            } catch (error) {
+                document.getElementById('statusMessage').textContent = 'Error getting UserId: ' + error.message;
+                console.error(error);
+            }
+        }
+
+        // Load Categories from API
+        async function loadCategories() {
+            try {
+                console.log('Loading categories...');
+                const response = await fetch('/api/Product/GetCategories');
+                if (!response.ok) throw new Error('Failed to fetch categories');
+
+                const categories = await response.json();
+                console.log('Categories fetched:', categories);
+
+                const select = document.getElementById('CategoryId');
+                categories.forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat.value;
+                    option.textContent = cat.text;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                document.getElementById('statusMessage').textContent = 'Error loading categories: ' + error.message;
+                console.error(error);
+            }
+        }
+
+        // Form Submit Handler
+        document.getElementById('addProductForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            console.log('Submit button clicked');
+
+            // Check if UserId is present
+            if (!userId) {
+                document.getElementById('statusMessage').textContent = 'UserId is missing, cannot submit form.';
+                return;
+            }
+
+            const form = e.target;
+            const formData = new FormData(form);
+
+            // Append UserId to form data
+            formData.set('UserId', userId);
+
+            // Log the form data for debugging
+            for (const pair of formData.entries()) {
+                console.log(pair[0], pair[1]);
+            }
+
+            try {
+                const response = await fetch('/api/Product/AddProduct', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                console.log('Response status:', response.status);
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error('Server validation errors:', errorData);
+
+                    let message = 'Validation failed:\n';
+                    if (errorData.errors) {
+                        for (const [field, messages] of Object.entries(errorData.errors)) {
+                            message += `${field}: ${messages.join(', ')}\n`;
+                        }
+                    } else {
+                        message = errorData.message || message;
+                    }
+
+                    document.getElementById('statusMessage').textContent = message;
+                    return;
+                }
+
+                const result = await response.json();
+                document.getElementById('statusMessage').textContent = 'Product added successfully!';
+                form.reset();
+            } catch (error) {
+                document.getElementById('statusMessage').textContent = 'Error: ' + error.message;
+                console.error(error);
+            }
+        });
+
+        // Load UserId on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            getUserId();
+        });
+    </script>
 }

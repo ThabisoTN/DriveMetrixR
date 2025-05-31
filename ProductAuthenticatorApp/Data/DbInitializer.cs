@@ -22,10 +22,7 @@ namespace ProductAuthenticatorApp.Data
                         {
                             Console.WriteLine($"Error creating role {roleName}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
                         }
-                        else
-                        {
                             Console.WriteLine("Roles Seeded Successfully");
-                        }
                     }
                 }
             }
@@ -54,10 +51,8 @@ namespace ProductAuthenticatorApp.Data
 
                     Console.WriteLine("UserType Saved To database");
                 }
-                else
-                {
+                
                     Console.WriteLine("UserTypes Already Exist In the Database");
-                }
             }
             catch (Exception ex)
             {
@@ -106,22 +101,20 @@ namespace ProductAuthenticatorApp.Data
         {
             try
             {
-                if (dbContext.ProductCategories.Any())
+                if (!dbContext.ProductCategories.Any())
                 {
-                    Console.WriteLine("Product Categories Already Exist!!!");
+                    var productCategoryData = new List<ProductCategory>()
+                    {
+                        new ProductCategory{CategoryName="Electronic"},
+                        new ProductCategory {CategoryName="Other"}
+                    };
+
+                    await dbContext.ProductCategories.AddRangeAsync(productCategoryData);
+                    await dbContext.SaveChangesAsync();
+
+                    Console.WriteLine($"Product category Saved To database {productCategoryData.Count}");
                 }
-                var productCategoryData = new List<ProductCategory>()
-                {
-                    new ProductCategory{CategoryName="Electronic"},
-                    new ProductCategory {CategoryName="Other"}
-                };
-
-                await dbContext.ProductCategories.AddRangeAsync(productCategoryData);
-                await dbContext.SaveChangesAsync();
-
-                Console.WriteLine($"Product category Saved To database {productCategoryData.Count}");
-
-
+                Console.WriteLine("Product Categories Already Exist!!!");
             }
             catch (Exception ex)
             {
