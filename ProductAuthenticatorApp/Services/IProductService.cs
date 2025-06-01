@@ -10,5 +10,7 @@ namespace ProductAuthenticatorApp.Services
     {
         Task<List<SelectListItem>> GetCategories();
         Task<Product> AddProduct(Product product, string userId);
+
+        Task<List<Product>> GetUserProducts(string userId);
     }
 }

@@ -13,5 +13,10 @@ namespace ProductAuthenticatorApp.Controllers
         {
             return View();
         }
+
+        public IActionResult ViewItems() 
+        {
+            return View();
+        }
     }
 }

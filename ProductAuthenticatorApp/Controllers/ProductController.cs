@@ -114,5 +114,35 @@ namespace ProductAuthenticatorApp.Controllers
                 return BadRequest();
             }
         }
+
+
+        //Get User products
+        [HttpGet("GetProducts")]
+        public async Task<IActionResult> GetProducts()
+        {
+            try
+            {
+                var userId= userManager.GetUserId(User);
+
+                if (userId != null)
+                {
+                    logger.LogInformation($"About To fetch Items For : {userId}");
+                    var userProducts= await productService.GetUserProducts(userId); 
+                    if (userProducts != null)
+                    {
+                        logger.LogInformation($"{userProducts.Count} products Found");
+                        return Ok(new {userProducts, success=true, message="Items Found"});
+                    }
+                    return BadRequest("No Item Found For This User");
+                }
+
+                throw new Exception("User Not Verified");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError (ex.Message, ex);
+                return BadRequest();
+            }
+        }
     }
 }

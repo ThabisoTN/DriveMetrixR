@@ -77,6 +77,26 @@ namespace ProductAuthenticatorApp.Service
                 throw;
             }
         }
+
+
+        //Get User Products
+        public async Task<List<Product>> GetUserProducts(string userId)
+        {
+            try
+            {
+                var getUserProducts = await dbContext.Products
+                    .Where(p => p.UserId == userId)
+                    .ToListAsync();
+
+                return getUserProducts;
+
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message);
+                throw;
+            }
+        }
     }
 }
 
