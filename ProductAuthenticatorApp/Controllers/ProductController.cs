@@ -70,7 +70,7 @@ namespace ProductAuthenticatorApp.Controllers
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.Message, ex);
+                logger.LogError(ex.Message);
                 return BadRequest();
             }
         }
@@ -140,7 +140,7 @@ namespace ProductAuthenticatorApp.Controllers
             }
             catch (Exception ex)
             {
-                logger.LogError (ex.Message, ex);
+                logger.LogError (ex.Message);
                 return BadRequest();
             }
         }

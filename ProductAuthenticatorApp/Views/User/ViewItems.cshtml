@@ -1,1 +1,91 @@
-﻿
+﻿@model IEnumerable<ProductAuthenticatorApp.Data.Product>
+@{
+    ViewData["Title"] = "My Products";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<link href="~/css/UserdashBoard.css" rel="stylesheet" />
+
+<h1>@ViewData["Title"]</h1>
+
+<div id="statusMessage" class="status-message"></div>
+
+<table id="productsTable" class="products-table" style="width:100%; border-collapse: collapse;">
+    <thead>
+        <tr style="background-color: #f2f2f2;">
+            <th style="border: 1px solid #ddd; padding: 8px;">Product Name</th>
+            <th style="border: 1px solid #ddd; padding: 8px;">Description</th>
+            <th style="border: 1px solid #ddd; padding: 8px;">Serial Number</th>
+            <th style="border: 1px solid #ddd; padding: 8px;">MAC Address</th>
+            <th style="border: 1px solid #ddd; padding: 8px;">Model Number</th>
+            <th style="border: 1px solid #ddd; padding: 8px;">Manufacturer</th>
+            <th style="border: 1px solid #ddd; padding: 8px;">Color</th>
+            <th style="border: 1px solid #ddd; padding: 8px;">Storage Capacity</th>
+            <th style="border: 1px solid #ddd; padding: 8px;">RAM</th>
+            <th style="border: 1px solid #ddd; padding: 8px;">Processor Model</th>
+            <th style="border: 1px solid #ddd; padding: 8px;">Operating System</th>
+        </tr>
+    </thead>
+    <tbody id="productsBody">
+        <tr><td colspan="11" style="text-align:center; padding: 10px;">Loading products...</td></tr>
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        async function loadUserProducts() {
+            const statusMessage = document.getElementById('statusMessage');
+            const productsBody = document.getElementById('productsBody');
+            productsBody.innerHTML = '<tr><td colspan="11" style="text-align:center; padding: 10px;">Loading products...</td></tr>';
+
+            try {
+                const response = await fetch('/api/Product/GetProducts', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    },
+                    credentials: 'include'  // Include cookies/auth if needed
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch products. Status: ' + response.status);
+                }
+
+                const data = await response.json();
+
+                if (data.success && data.userProducts.length > 0) {
+                    productsBody.innerHTML = ''; // Clear loading text
+
+                    data.userProducts.forEach(product => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                                    <td style="border: 1px solid #ddd; padding: 8px;">${product.productName || ''}</td>
+                                    <td style="border: 1px solid #ddd; padding: 8px;">${product.productDescription || ''}</td>
+                                    <td style="border: 1px solid #ddd; padding: 8px;">${product.serialNumber || ''}</td>
+                                    <td style="border: 1px solid #ddd; padding: 8px;">${product.macAddress || ''}</td>
+                                    <td style="border: 1px solid #ddd; padding: 8px;">${product.modelNumber || ''}</td>
+                                    <td style="border: 1px solid #ddd; padding: 8px;">${product.manufacturer || ''}</td>
+                                    <td style="border: 1px solid #ddd; padding: 8px;">${product.color || ''}</td>
+                                    <td style="border: 1px solid #ddd; padding: 8px;">${product.storageCapacity || ''}</td>
+                                    <td style="border: 1px solid #ddd; padding: 8px;">${product.ram || ''}</td>
+                                    <td style="border: 1px solid #ddd; padding: 8px;">${product.processorModel || ''}</td>
+                                    <td style="border: 1px solid #ddd; padding: 8px;">${product.operatingSystem || ''}</td>
+                                `;
+                        productsBody.appendChild(tr);
+                    });
+
+                    statusMessage.textContent = `Loaded ${data.userProducts.length} products.`;
+                } else {
+                    productsBody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding: 10px;">No products found.</td></tr>`;
+                    statusMessage.textContent = data.message || "No products found.";
+                }
+            } catch (error) {
+                statusMessage.textContent = 'Error loading products: ' + error.message;
+                productsBody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding: 10px;">Failed to load products.</td></tr>`;
+                console.error('Error fetching products:', error);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', loadUserProducts);
+    </script>
+}
