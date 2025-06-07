@@ -1,1 +1,180 @@
-﻿
+﻿@{
+    ViewData["Title"] = "Your Products";
+}
+
+<div class="container py-4">
+    <h1 class="mb-4">@ViewData["Title"]</h1>
+
+    <!-- Loading spinner -->
+    <div id="loadingSpinner" class="text-center my-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">Loading your products...</p>
+    </div>
+
+    <!-- Products Table -->
+    <div id="productsContainer" class="d-none">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4>Product List</h4>
+            <div>
+                <span id="productCount" class="badge bg-primary me-2"></span>
+                <a href="/Product/Create" class="btn btn-success btn-sm">
+                    <i class="bi bi-plus-circle"></i> Add Product
+                </a>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Product Name</th>
+                        <th>Description</th>
+                        <th>Serial</th>
+                        <th>MAC Address</th>
+                        <th>Model</th>
+                        <th>Manufacturer</th>
+                        <th>Color</th>
+                        <th>Storage</th>
+                        <th>RAM</th>
+                        <th>Processor</th>
+                        <th>OS</th>
+                
+                    </tr>
+                </thead>
+                <tbody id="productsTableBody">
+                    <!-- Products will be populated here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Empty state message -->
+    <div id="emptyState" class="alert alert-info d-none">
+        You haven't added any products yet.
+    </div>
+
+    <!-- Error message -->
+    <div id="errorMessage" class="alert alert-danger d-none"></div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Generate URL using Razor to ensure correct path
+            const productsUrl = '@Url.Action("GetProducts", "Product")';
+
+            // Show loading spinner
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const productsContainer = document.getElementById('productsContainer');
+            const emptyState = document.getElementById('emptyState');
+            const errorMessage = document.getElementById('errorMessage');
+            const tableBody = document.getElementById('productsTableBody');
+            const productCount = document.getElementById('productCount');
+
+            // Fetch products using Fetch API
+            fetch(productsUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    loadingSpinner.classList.add('d-none');
+
+                    if (data.success && data.userProducts.length > 0) {
+                        renderProducts(data.userProducts);
+                        productsContainer.classList.remove('d-none');
+                    } else {
+                        emptyState.classList.remove('d-none');
+                    }
+                })
+                .catch(error => {
+                    loadingSpinner.classList.add('d-none');
+                    errorMessage.textContent = `Error loading products: ${error.message}`;
+                    errorMessage.classList.remove('d-none');
+                    console.error('Fetch Error:', error);
+                });
+
+            function renderProducts(products) {
+                tableBody.innerHTML = '';
+                productCount.textContent = `${products.length} products`;
+
+                products.forEach(product => {
+                    const row = document.createElement('tr');
+
+                    row.innerHTML = `
+                        <td>${product.id}</td>
+                        <td>${escapeHtml(product.productName || 'N/A')}</td>
+                        <td title="${escapeHtml(product.productDescription || '')}">
+                            ${truncate(escapeHtml(product.productDescription || ''), 30)}
+                        </td>
+                        <td>${escapeHtml(product.serialNumber || '')}</td>
+                        <td>${escapeHtml(product.macAddress || '')}</td>
+                        <td>${escapeHtml(product.modelNumber || '')}</td>
+                        <td>${escapeHtml(product.manufacturer || '')}</td>
+                        <td>${escapeHtml(product.color || '')}</td>
+                        <td>${escapeHtml(product.storageCapacity || '')}</td>
+                        <td>${escapeHtml(product.ram || '')}</td>
+                        <td>${escapeHtml(product.processorModel || '')}</td>
+                        <td>${escapeHtml(product.operatingSystem || '')}</td>
+                    `;
+
+                    tableBody.appendChild(row);
+                });
+            }
+
+            // Basic HTML escaping for security
+            function escapeHtml(unsafe) {
+                if (unsafe == null) return '';
+                return unsafe.toString()
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+            }
+
+            // Truncate long text with ellipsis
+            function truncate(text, maxLength) {
+                if (!text) return '';
+                return text.length > maxLength
+                    ? text.substring(0, maxLength) + '...'
+                    : text;
+            }
+        });
+    </script>
+
+    <style>
+        .table-hover tbody tr:hover {
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+
+        .table th, .table td {
+            vertical-align: middle;
+            font-size: 0.9rem;
+            padding: 0.75rem;
+        }
+
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .badge {
+            font-size: 0.9rem;
+            padding: 0.5em 0.75em;
+        }
+
+        [title] {
+            cursor: help;
+        }
+
+        .d-none {
+            display: none !important;
+        }
+    </style>
+}
