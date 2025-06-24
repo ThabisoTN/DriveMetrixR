@@ -64,6 +64,7 @@ namespace ProductAuthenticatorApp.Service
                     ProcessorModel = product.ProcessorModel,
                     OperatingSystem = product.OperatingSystem,
                     CategoryId =product.CategoryId,
+                    ProductImage=product.ProductImage,
                     UserId=userId
                 };
                     await dbContext.Products.AddAsync(newProduct);

@@ -275,6 +275,10 @@ namespace ProductAuthenticatorApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<byte[]>("ProductImage")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
                     b.Property<string>("ProductName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

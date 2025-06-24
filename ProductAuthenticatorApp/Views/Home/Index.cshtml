@@ -6,43 +6,359 @@
 <link href="https://fonts.googleapis.com/css2?family=Libre+Barcode+128&display=swap" rel="stylesheet">
 <!-- Add icon library -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="~/css/Home.css"/>
 
-<div class="scanner-container">
-    <div class="scanner-header">
-        <i class="fas fa-qrcode"></i> Product Authentication Scanner
-    </div>
-    <div class="scanner-body">
-        <div class="scanner-animation">
-            <div class="scanner-viewfinder"></div>
-            <div class="scanner-grid"></div>
-            <div class="scanner-laser"></div>
-            <div class="scanner-reflection"></div>
+<style>
+    :root {
+        --primary-color: #4361ee;
+        --primary-dark: #3a56d4;
+        --secondary-color: #3f37c9;
+        --light-color: #f8f9fa;
+        --dark-color: #212529;
+        --gray-color: #6c757d;
+        --light-gray: #e9ecef;
+        --success-color: #28a745;
+    }
 
-            <!-- Simulated product barcode that appears when scanned -->
-            <div class="scanned-barcode" style="
-                position: absolute;
-                width: 80%;
-                height: 30%;
-                background: white;
-                display: none;
-                align-items: center;
-                justify-content: center;
-                font-family: 'Libre Barcode 128', cursive;
-                font-size: 2rem;
-                color: black;
-                animation: flicker 0.5s infinite alternate;
-            ">
-                AUTHSCAN-2023
+    .scanner-page {
+        display: flex;
+        height: calc(100vh - 120px); /* Account for header/footer */
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    /* Scanner Section */
+    .scanner-section {
+        flex: 1;
+        background: white;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        position: relative;
+        z-index: 10;
+    }
+
+    .scanner-header {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 1.5rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        font-size: 1.4rem;
+    }
+
+    .scanner-body {
+        padding: 2.5rem;
+        text-align: center;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .scanner-animation {
+        width: 100%;
+        height: 300px;
+        background-color: #111;
+        margin: 0 auto 2rem;
+        position: relative;
+        border: 2px solid var(--primary-color);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .scanner-viewfinder {
+        position: absolute;
+        width: 80%;
+        height: 60%;
+        border: 3px solid rgba(255,255,255,0.2);
+    }
+
+    .scanner-laser {
+        position: absolute;
+        top: 0;
+        left: 10%;
+        width: 80%;
+        height: 3px;
+        background: linear-gradient(90deg, rgba(255,0,0,0) 0%, rgba(255,0,0,0.8) 50%, rgba(255,0,0,0) 100%);
+        animation: scan 2s linear infinite;
+        box-shadow: 0 0 10px rgba(255,0,0,0.5);
+        z-index: 2;
+    }
+
+    .scanner-grid {
+        position: absolute;
+        width: 80%;
+        height: 60%;
+        background-image: linear-gradient(rgba(0,255,0,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,0,0.1) 1px, transparent 1px);
+        background-size: 20px 20px;
+        opacity: 0.5;
+    }
+
+    .scanner-reflection {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%);
+        animation: reflection 5s linear infinite;
+    }
+
+    .scanned-barcode {
+        position: absolute;
+        width: 80%;
+        height: 30%;
+        background: white;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Libre Barcode 128', cursive;
+        font-size: 2.5rem;
+        color: black;
+        animation: flicker 0.5s infinite alternate;
+        z-index: 5;
+    }
+
+    .barcode-display {
+        font-family: 'Libre Barcode 128', cursive;
+        font-size: 3rem;
+        color: var(--dark-color);
+        background: white;
+        padding: 0.8rem 2rem;
+        border-radius: 5px;
+        display: inline-block;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        margin: 1.5rem 0;
+        transform: rotate(-1deg);
+        border: 1px solid var(--light-gray);
+    }
+
+    .scan-instructions {
+        color: var(--gray-color);
+        margin: 1.5rem 0 2.5rem;
+        font-size: 1.2rem;
+        line-height: 1.6;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .cta-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--primary-color);
+        color: white;
+        padding: 1rem 3rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 5px 20px rgba(67,97,238,0.3);
+    }
+
+        .cta-button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(67,97,238,0.4);
+        }
+
+        .cta-button i {
+            margin-right: 12px;
+            font-size: 1.4rem;
+        }
+
+    /* Image Section */
+    .image-section {
+        flex: 1;
+        background: #0f172a;
+        position: relative;
+        overflow: hidden;
+        height: 100%;
+    }
+
+    .scan-image-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .scan-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .scan-guideline {
+        position: absolute;
+        top: 25%;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: var(--success-color);
+        box-shadow: 0 0 25px var(--success-color);
+        animation: scanMove 3s ease-in-out infinite;
+        z-index: 10;
+    }
+
+    /* Animations */
+    @@keyframes scan {
+        0% {
+            transform: translateY(-10%);
+        }
+
+        100% {
+            transform: translateY(350%);
+        }
+    }
+
+    @@keyframes reflection {
+        0% {
+            transform: translateX(-100%) translateY(-100%);
+        }
+
+        100% {
+            transform: translateX(100%) translateY(100%);
+        }
+    }
+
+    @@keyframes flicker {
+        0%, 100% {
+            opacity: 0.8;
+        }
+
+        50% {
+            opacity: 0.6;
+        }
+    }
+
+    @@keyframes scanMove {
+        0%, 100% {
+            top: 25%;
+        }
+
+        50% {
+            top: 75%;
+        }
+    }
+
+    /* Responsive adjustments */
+    @@media (max-width: 992px) {
+        .scanner-page {
+            flex-direction: column;
+            height: auto;
+        }
+
+        .scanner-section, .image-section {
+            height: 50vh;
+        }
+
+        .scanner-animation {
+            height: 250px;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .scanner-body {
+            padding: 1.5rem;
+        }
+
+        .scanner-animation {
+            height: 200px;
+        }
+
+        .barcode-display {
+            font-size: 2.2rem;
+        }
+
+        .cta-button {
+            padding: 0.8rem 2rem;
+            font-size: 1.1rem;
+        }
+    }
+</style>
+
+<div class="scanner-page">
+    <!-- Left: Scanner Section -->
+    <div class="scanner-section">
+
+        <div class="scanner-body">
+            <div class="scanner-animation">
+                <div class="scanner-viewfinder"></div>
+                <div class="scanner-grid"></div>
+                <div class="scanner-laser"></div>
+                <div class="scanner-reflection"></div>
+                <div class="scanned-barcode" id="scannedBarcode">
+                    AUTHSCAN-2023
+                </div>
             </div>
+
+            <div class="barcode-display">AUTHSCAN-2023</div>
+
+            <p class="scan-instructions">
+                Point your camera at any product QR code to instantly verify its authenticity
+                and check if it belongs to you.
+            </p>
+
+            <a href="/Product" class="cta-button" id="scanButton">
+                <i class="fas fa-play"></i> FindIT
+            </a>
         </div>
-        <div class="barcode-display">AUTHSCAN-2023</div>
-        <p class="scan-instructions">Point your camera at any product to verify if it belong to you or not...</p>
-        <a href="/Product" class="cta-button">
-            <i class="fas fa-play"></i> FindIT
-        </a>
+    </div>
+
+    <!-- Right: Image Section -->
+    <div class="image-section">
+        <div class="scan-image-container">
+            <img src="~/Images/imin-technology-DmXCnZGyesM-unsplash.jpg"
+                 alt="Person scanning QR code" class="scan-image">
+            <div class="scan-guideline"></div>
+        </div>
     </div>
 </div>
 
-<script src="~/js/Home.js">
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const scanButton = document.getElementById('scanButton');
+        const scannedBarcode = document.getElementById('scannedBarcode');
+
+        // Simulate scanning process when button is clicked
+        scanButton.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            // Show scanning animation
+            const originalText = scanButton.innerHTML;
+            scanButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Scanning...';
+            scanButton.classList.add('scanning');
+
+            // After delay, show the result
+            setTimeout(function() {
+                scannedBarcode.style.display = 'flex';
+
+                // Change button to show success
+                scanButton.innerHTML = '<i class="fas fa-check-circle"></i> Authenticated!';
+                scanButton.classList.remove('scanning');
+                scanButton.classList.add('authenticated');
+
+                // Redirect after 3 seconds
+                setTimeout(function() {
+                    window.location.href = scanButton.href;
+                }, 3000);
+            }, 2000);
+        });
+    });
 </script>

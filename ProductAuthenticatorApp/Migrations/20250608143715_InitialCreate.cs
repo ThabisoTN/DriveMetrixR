@@ -54,6 +54,45 @@ namespace ProductAuthenticatorApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ProductCategories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CategoryName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductCategories", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Products",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProductName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProductDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SerialNumber = table.Column<int>(type: "int", nullable: false),
+                    MACAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ModelNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Manufacturer = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProductImage = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    Color = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StorageCapacity = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RAM = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProcessorModel = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OperatingSystem = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CategoryId = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Products", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserTypes",
                 columns: table => new
                 {
@@ -229,6 +268,12 @@ namespace ProductAuthenticatorApp.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "ProductCategories");
+
+            migrationBuilder.DropTable(
+                name: "Products");
 
             migrationBuilder.DropTable(
                 name: "UserTypes");
