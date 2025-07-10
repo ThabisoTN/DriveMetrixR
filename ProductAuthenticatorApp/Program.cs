@@ -22,15 +22,15 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
 
 
 //register Sevices
-builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IProductService, AdminService>();
+builder.Services.AddScoped<IVehicleService, VehicleService>();
 
 
 
-// Add MVC and Razor Pages support (MUST COME BEFORE Build())
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-var app = builder.Build();  // After this point, you can't modify services
+var app = builder.Build();  
 
 // Database seeding
 using (var scope = app.Services.CreateScope())
@@ -43,9 +43,11 @@ using (var scope = app.Services.CreateScope())
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
         await DbInitializer.SeedRoles(roleManager);
-        await DbInitializer.SeedUserType(context);
         await DbInitializer.SeedAdmin(context, userManager);
-        await DbInitializer.SeedProductcategory(context);
+        await DbInitializer.SeedSuppliers(context);
+        await DbInitializer.SeedBranches(context);
+        await DbInitializer.SeedVehicles(context);
+
     }
     catch (Exception ex)
     {

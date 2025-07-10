@@ -4,10 +4,8 @@ namespace ProductAuthenticatorApp.Data
 {
     public class ApplicationUser: IdentityUser
     {
-        public string Firstname { set;get; }
-        public string Lastname { set;get; }
-
-        public int UserTypeId { set;get; }
-
+        public string FirstName { set;get; }
+        public string LastName { set;get; }
+        public bool IsBusinessClient { set;get; }
     }
 }

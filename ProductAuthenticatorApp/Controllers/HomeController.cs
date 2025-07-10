@@ -1,22 +1,38 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using ProductAuthenticatorApp.Data;
 using ProductAuthenticatorApp.Models;
+using ProductAuthenticatorApp.Services;
 using System.Diagnostics;
 
 namespace ProductAuthenticatorApp.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ApplicationDbContext _dbContext;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IProductService _productService;
+        private readonly IVehicleService vehicleService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(
+            ApplicationDbContext dbContext,
+            UserManager<ApplicationUser> userManager,
+            IProductService productService, IVehicleService vehicleService)
         {
-            _logger = logger;
+            _dbContext = dbContext;
+            _userManager = userManager;
+            _productService = productService;
+            this.vehicleService = vehicleService;
         }
 
-        public IActionResult Index()
+
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var vehicles = await vehicleService.GetAllVehicles();
+            return View(vehicles);
         }
+
+
 
         public IActionResult Privacy()
         {

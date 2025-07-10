@@ -1,364 +1,392 @@
-﻿@{
-    ViewData["Title"] = "AuthoScan - Product Authentication Made Simple";
-}
+﻿@model IEnumerable<ProductAuthenticatorApp.Data.Vehicle>
 
-<!-- Add barcode font -->
-<link href="https://fonts.googleapis.com/css2?family=Libre+Barcode+128&display=swap" rel="stylesheet">
-<!-- Add icon library -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-<style>
-    :root {
-        --primary-color: #4361ee;
-        --primary-dark: #3a56d4;
-        --secondary-color: #3f37c9;
-        --light-color: #f8f9fa;
-        --dark-color: #212529;
-        --gray-color: #6c757d;
-        --light-gray: #e9ecef;
-        --success-color: #28a745;
-    }
-
-    .scanner-page {
-        display: flex;
-        height: calc(100vh - 120px); /* Account for header/footer */
-        width: 100%;
-        max-width: 100%;
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-    }
-
-    /* Scanner Section */
-    .scanner-section {
-        flex: 1;
-        background: white;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        position: relative;
-        z-index: 10;
-    }
-
-    .scanner-header {
-        background-color: var(--primary-color);
-        color: white;
-        padding: 1.5rem;
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-        font-size: 1.4rem;
-    }
-
-    .scanner-body {
-        padding: 2.5rem;
-        text-align: center;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-
-    .scanner-animation {
-        width: 100%;
-        height: 300px;
-        background-color: #111;
-        margin: 0 auto 2rem;
-        position: relative;
-        border: 2px solid var(--primary-color);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: hidden;
-    }
-
-    .scanner-viewfinder {
-        position: absolute;
-        width: 80%;
-        height: 60%;
-        border: 3px solid rgba(255,255,255,0.2);
-    }
-
-    .scanner-laser {
-        position: absolute;
-        top: 0;
-        left: 10%;
-        width: 80%;
-        height: 3px;
-        background: linear-gradient(90deg, rgba(255,0,0,0) 0%, rgba(255,0,0,0.8) 50%, rgba(255,0,0,0) 100%);
-        animation: scan 2s linear infinite;
-        box-shadow: 0 0 10px rgba(255,0,0,0.5);
-        z-index: 2;
-    }
-
-    .scanner-grid {
-        position: absolute;
-        width: 80%;
-        height: 60%;
-        background-image: linear-gradient(rgba(0,255,0,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,0,0.1) 1px, transparent 1px);
-        background-size: 20px 20px;
-        opacity: 0.5;
-    }
-
-    .scanner-reflection {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%);
-        animation: reflection 5s linear infinite;
-    }
-
-    .scanned-barcode {
-        position: absolute;
-        width: 80%;
-        height: 30%;
-        background: white;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        font-family: 'Libre Barcode 128', cursive;
-        font-size: 2.5rem;
-        color: black;
-        animation: flicker 0.5s infinite alternate;
-        z-index: 5;
-    }
-
-    .barcode-display {
-        font-family: 'Libre Barcode 128', cursive;
-        font-size: 3rem;
-        color: var(--dark-color);
-        background: white;
-        padding: 0.8rem 2rem;
-        border-radius: 5px;
-        display: inline-block;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        margin: 1.5rem 0;
-        transform: rotate(-1deg);
-        border: 1px solid var(--light-gray);
-    }
-
-    .scan-instructions {
-        color: var(--gray-color);
-        margin: 1.5rem 0 2.5rem;
-        font-size: 1.2rem;
-        line-height: 1.6;
-        max-width: 500px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .cta-button {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        background-color: var(--primary-color);
-        color: white;
-        padding: 1rem 3rem;
-        border-radius: 8px;
-        text-decoration: none;
-        font-weight: 600;
-        font-size: 1.2rem;
-        transition: all 0.3s ease;
-        border: none;
-        cursor: pointer;
-        box-shadow: 0 5px 20px rgba(67,97,238,0.3);
-    }
-
-        .cta-button:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(67,97,238,0.4);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DriveMatrixR - Premium Vehicle Leasing</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #f59e0b;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #94a3b8;
         }
 
-        .cta-button i {
-            margin-right: 12px;
-            font-size: 1.4rem;
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--light);
+            color: var(--dark);
         }
 
-    /* Image Section */
-    .image-section {
-        flex: 1;
-        background: #0f172a;
-        position: relative;
-        overflow: hidden;
-        height: 100%;
-    }
-
-    .scan-image-container {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .scan-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-    }
-
-    .scan-guideline {
-        position: absolute;
-        top: 25%;
-        left: 0;
-        width: 100%;
-        height: 4px;
-        background: var(--success-color);
-        box-shadow: 0 0 25px var(--success-color);
-        animation: scanMove 3s ease-in-out infinite;
-        z-index: 10;
-    }
-
-    /* Animations */
-    @@keyframes scan {
-        0% {
-            transform: translateY(-10%);
+        .landing-container {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            min-height: 100vh;
         }
 
-        100% {
-            transform: translateY(350%);
-        }
-    }
-
-    @@keyframes reflection {
-        0% {
-            transform: translateX(-100%) translateY(-100%);
-        }
-
-        100% {
-            transform: translateX(100%) translateY(100%);
-        }
-    }
-
-    @@keyframes flicker {
-        0%, 100% {
-            opacity: 0.8;
-        }
-
-        50% {
-            opacity: 0.6;
-        }
-    }
-
-    @@keyframes scanMove {
-        0%, 100% {
-            top: 25%;
-        }
-
-        50% {
-            top: 75%;
-        }
-    }
-
-    /* Responsive adjustments */
-    @@media (max-width: 992px) {
-        .scanner-page {
+        /* Left Panel - Branding */
+        .brand-panel {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 3rem;
+            display: flex;
             flex-direction: column;
-            height: auto;
+            justify-content: center;
         }
 
-        .scanner-section, .image-section {
-            height: 50vh;
+        .brand-content {
+            max-width: 500px;
+            margin: 0 auto;
         }
 
-        .scanner-animation {
-            height: 250px;
-        }
-    }
-
-    @@media (max-width: 576px) {
-        .scanner-body {
-            padding: 1.5rem;
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
         }
 
-        .scanner-animation {
-            height: 200px;
+        .logo-icon {
+            font-size: 2.5rem;
+            margin-right: 1rem;
+            color: var(--secondary);
         }
 
-        .barcode-display {
-            font-size: 2.2rem;
+        .logo-text {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .tagline {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
+            line-height: 1.4;
+        }
+
+        .highlight {
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .features {
+            margin: 2.5rem 0;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-icon {
+            font-size: 1.2rem;
+            color: var(--secondary);
+            margin-right: 1rem;
+            margin-top: 0.2rem;
+        }
+
+        .feature-text h4 {
+            margin: 0 0 0.3rem 0;
+            font-weight: 600;
+        }
+
+        .feature-text p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 0.95rem;
         }
 
         .cta-button {
-            padding: 0.8rem 2rem;
-            font-size: 1.1rem;
+            display: inline-block;
+            background-color: var(--secondary);
+            color: var(--dark);
+            padding: 0.8rem 1.8rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
         }
-    }
-</style>
 
-<div class="scanner-page">
-    <!-- Left: Scanner Section -->
-    <div class="scanner-section">
+            .cta-button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            }
 
-        <div class="scanner-body">
-            <div class="scanner-animation">
-                <div class="scanner-viewfinder"></div>
-                <div class="scanner-grid"></div>
-                <div class="scanner-laser"></div>
-                <div class="scanner-reflection"></div>
-                <div class="scanned-barcode" id="scannedBarcode">
-                    AUTHSCAN-2023
+        /* Right Panel - Vehicles */
+        .vehicles-panel {
+            padding: 3rem;
+            background-color: white;
+            overflow-y: auto;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            background-color: var(--light);
+            border-radius: 50px;
+            padding: 0.5rem 1rem;
+            width: 300px;
+        }
+
+            .search-container input {
+                border: none;
+                background: transparent;
+                padding: 0.5rem;
+                width: 100%;
+                outline: none;
+            }
+
+            .search-container button {
+                background: transparent;
+                border: none;
+                color: var(--gray);
+                cursor: pointer;
+            }
+
+        .vehicle-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .vehicle-card {
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+
+            .vehicle-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            }
+
+        .vehicle-image {
+            height: 200px;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .vehicle-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.5s ease;
+            }
+
+        .vehicle-card:hover .vehicle-image img {
+            transform: scale(1.05);
+        }
+
+        .no-image {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f1f5f9;
+            color: var(--gray);
+            font-size: 3rem;
+        }
+
+        .vehicle-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background-color: rgba(37, 99, 235, 0.9);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .vehicle-details {
+            padding: 1.5rem;
+        }
+
+        .vehicle-make-model {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .vehicle-specs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.8rem;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+            .vehicle-specs span {
+                display: flex;
+                align-items: center;
+            }
+
+            .vehicle-specs i {
+                margin-right: 0.3rem;
+                font-size: 0.8rem;
+            }
+
+        .vehicle-price {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .vehicle-location {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-bottom: 1.2rem;
+        }
+
+            .vehicle-location i {
+                margin-right: 0.5rem;
+            }
+
+        .view-details {
+            display: block;
+            text-align: center;
+            padding: 0.7rem;
+            background-color: var(--primary);
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 6px;
+            transition: background-color 0.3s ease;
+        }
+
+            .view-details:hover {
+                background-color: var(--primary-dark);
+            }
+
+        /* Responsive Design */
+        @@media (max-width: 1024px) {
+            .landing-container
+
+        {
+            grid-template-columns: 1fr;
+        }
+
+        .brand-panel {
+            padding: 2rem;
+        }
+
+        .vehicles-panel {
+            padding: 2rem;
+        }
+
+        }
+
+        @@media (max-width: 768px) {
+            .vehicle-grid
+
+        {
+            grid-template-columns: 1fr;
+        }
+
+        .section-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .search-container {
+            width: 100%;
+        }
+
+        }
+    </style>
+</head>
+<body>
+    <div class="landing-container">
+        <!-- Left Brand Panel -->
+        <div class="brand-panel">
+            <div class="brand-content">
+    
+            </div>
+        </div>
+
+        <!-- Right Vehicles Panel -->
+        <div class="vehicles-panel">
+            <div class="section-header">
+                <h2 class="section-title">Available Vehicles</h2>
+                <div class="search-container">
+                    <input type="text" placeholder="Search vehicles...">
+                    <button type="submit"><i class="fas fa-search"></i></button>
                 </div>
             </div>
 
-            <div class="barcode-display">AUTHSCAN-2023</div>
+            <div class="vehicle-grid">
+                @foreach (var vehicle in Model)
+                {
+                    <div class="vehicle-card">
+                        <div class="vehicle-image">
+                            @if (!string.IsNullOrEmpty(vehicle.ImagePath))
+                            {
+                                <img src="@vehicle.ImagePath" alt="@vehicle.Make @vehicle.Model">
+                            }
+                            else
+                            {
+                                <div class="no-image">
+                                    <i class="fas fa-car"></i>
+                                </div>
+                            }
+                            <span class="vehicle-badge">@vehicle.Year</span>
+                        </div>
 
-            <p class="scan-instructions">
-                Point your camera at any product QR code to instantly verify its authenticity
-                and check if it belongs to you.
-            </p>
+                        <div class="vehicle-details">
+                            <h3 class="vehicle-make-model">@vehicle.Make @vehicle.Model</h3>
 
-            <a href="/Product" class="cta-button" id="scanButton">
-                <i class="fas fa-play"></i> FindIT
-            </a>
+                        @*     <div class="vehicle-specs">
+                                <span><i class="fas fa-palette"></i> @vehicle.Color</span>
+                                <span><i class="fas fa-tachometer-alt"></i> @(vehicle.Mileage?.ToString() ?? "N/A") mi</span>
+                            </div> *@
+
+                            <div class="vehicle-price">@vehicle.LeasingPrice.ToString("C")<span style="font-size: 0.8rem; color: var(--gray);">/month</span></div>
+
+                            <div class="vehicle-location">
+                                <i class="fas fa-map-marker-alt"></i> @vehicle.Branch?.Name
+                            </div>
+
+                            <a asp-controller="Home" asp-action="Details" asp-route-id="@vehicle.VehicleId" class="view-details">
+                                View Details <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
         </div>
     </div>
-
-    <!-- Right: Image Section -->
-    <div class="image-section">
-        <div class="scan-image-container">
-            <img src="~/Images/imin-technology-DmXCnZGyesM-unsplash.jpg"
-                 alt="Person scanning QR code" class="scan-image">
-            <div class="scan-guideline"></div>
-        </div>
-    </div>
-</div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const scanButton = document.getElementById('scanButton');
-        const scannedBarcode = document.getElementById('scannedBarcode');
-
-        // Simulate scanning process when button is clicked
-        scanButton.addEventListener('click', function(e) {
-            e.preventDefault();
-
-            // Show scanning animation
-            const originalText = scanButton.innerHTML;
-            scanButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Scanning...';
-            scanButton.classList.add('scanning');
-
-            // After delay, show the result
-            setTimeout(function() {
-                scannedBarcode.style.display = 'flex';
-
-                // Change button to show success
-                scanButton.innerHTML = '<i class="fas fa-check-circle"></i> Authenticated!';
-                scanButton.classList.remove('scanning');
-                scanButton.classList.add('authenticated');
-
-                // Redirect after 3 seconds
-                setTimeout(function() {
-                    window.location.href = scanButton.href;
-                }, 3000);
-            }, 2000);
-        });
-    });
-</script>
+</body>
+</html>

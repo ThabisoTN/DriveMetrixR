@@ -31,67 +31,7 @@ namespace ProductAuthenticatorApp.Controllers
         }
 
 
-        //Get Method For Add Product
-        [HttpGet]
-        public async Task<IActionResult> AddProduct()
-        {
-            try
-            {
-                var getCategories= await productService.GetCategories();
-
-                ViewBag.Categories = getCategories;
-
-                return View(getCategories);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex.Message);
-                throw new Exception();
-            }
-
-        }
-
-
-        //Post Method To Add Product To Database
-        [HttpPost]
-        public async Task<IActionResult> AddProduct(Product product, IFormFile imageFile)
-        {
-            try
-            {
-                var userId = userManager.GetUserId(User);
-
-                if (!ModelState.IsValid)
-                {
-                    logger.LogInformation("Invalid data passed");
-                    return BadRequest();
-
-                }
-
-                if (userId != null)
-                {
-                    logger.LogInformation("About To Add product To database...");
-
-                    using var memoryStream = new MemoryStream();
-                    await imageFile.CopyToAsync(memoryStream);
-                    product.ProductImage = memoryStream.ToArray();
-
-
-                    await productService.AddProduct(product, userId);
-
-                    logger.LogInformation("Product added successfully.");
-                    return View("ViewItems","User");
-                }
-
-                logger.LogInformation("user Id Not valid");
-                return BadRequest("Invalid User Id");
-
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Error Occured When Trying To add product to Database : {ex.Message}");
-                return BadRequest();
-            }
-        }
+ 
 
 
         public IActionResult ViewItems() 

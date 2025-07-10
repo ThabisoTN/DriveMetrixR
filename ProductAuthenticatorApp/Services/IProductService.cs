@@ -8,9 +8,13 @@ namespace ProductAuthenticatorApp.Services
 {
     public interface IProductService
     {
-        Task<List<SelectListItem>> GetCategories();
-        Task<Product> AddProduct(Product product, string userId);
-
-        Task<List<Product>> GetUserProducts(string userId);
+        Task<List<Supplier>> GetSuppliers();
+        Task<List<Branch>> GetBranches();
+        Task<ApplicationUser> AddBranchManager(
+          string email,
+          string password,
+          string firstName,
+          string lastName,
+          int branchId);
     }
 }

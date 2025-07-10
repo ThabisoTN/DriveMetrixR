@@ -1,0 +1,153 @@
+﻿@model IEnumerable<ProductAuthenticatorApp.Data.Branch>
+
+@{
+    ViewData["Title"] = "Branches";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="branches-container">
+    <div class="header-section">
+        <h1 class="page-title">Our Branches</h1>
+        <a class="btn create-btn" asp-action="Create">
+            <i class="fas fa-plus"></i> Add New Branch
+        </a>
+    </div>
+
+    <div class="branches-table-container">
+        <table class="branches-table">
+            <thead>
+                <tr>
+                    <th>Branch Name</th>
+                    <th>Location</th>
+                    <th>Manager</th>
+                    <th>Contact Number</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Location)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Manager)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Phone)</td>
+                        <td class="action-links">
+                            <a asp-action="Edit" asp-route-id="@item.BranchId" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a asp-action="Details" asp-route-id="@item.BranchId" title="Details">
+                                <i class="fas fa-info-circle"></i>
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.BranchId" title="Delete">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    /* Base Styles */
+    .branches-container {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    /* Header Section */
+    .header-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+    .page-title {
+        color: #2c3e50;
+        font-weight: 600;
+    }
+
+    /* Button Styles */
+    .create-btn {
+        background-color: #3498db;
+        color: white;
+        padding: 8px 15px;
+        border-radius: 4px;
+        text-decoration: none;
+        transition: background-color 0.3s;
+    }
+
+        .create-btn:hover {
+            background-color: #2980b9;
+            color: white;
+        }
+
+    /* Table Styles */
+    .branches-table-container {
+        overflow-x: auto;
+    }
+
+    .branches-table {
+        width: 100%;
+        border-collapse: collapse;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+        .branches-table th {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        .branches-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .branches-table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+    /* Action Links */
+    .action-links {
+        white-space: nowrap;
+    }
+
+        .action-links a {
+            color: #7f8c8d;
+            margin: 0 5px;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+            .action-links a:hover {
+                color: #3498db;
+                text-decoration: none;
+            }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .header-section {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .create-btn {
+            margin-top: 15px;
+        }
+
+        .branches-table th,
+        .branches-table td {
+            padding: 8px 10px;
+        }
+    }
+</style>
+
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">

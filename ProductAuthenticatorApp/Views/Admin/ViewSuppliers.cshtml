@@ -1,0 +1,192 @@
+﻿@model IEnumerable<ProductAuthenticatorApp.Data.Supplier>
+
+@{
+    ViewData["Title"] = "Suppliers";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="data-container">
+    <div class="header-section">
+        <h1 class="page-title">Supplier Management</h1>
+        <a class="btn action-btn" asp-action="Create">
+            <i class="fas fa-plus-circle"></i> Add Supplier
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr class="header-row">
+                    <th>Supplier Name</th>
+                    <th>Contact</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Location</th>
+                    <th class="actions-column">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr class="data-row">
+                        <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                        <td>@Html.DisplayFor(modelItem => item.ContactPerson)</td>
+                        <td><a href="mailto:@item.Email">@Html.DisplayFor(modelItem => item.Email)</a></td>
+                        <td><a href="tel:@item.Phone">@Html.DisplayFor(modelItem => item.Phone)</a></td>
+                        <td>@Html.DisplayFor(modelItem => item.Address)</td>
+                        <td class="action-buttons">
+                            <a class="btn edit-btn" asp-action="Edit" asp-route-id="@item.SupplierId" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a class="btn details-btn" asp-action="Details" asp-route-id="@item.SupplierId" title="Details">
+                                <i class="fas fa-info-circle"></i>
+                            </a>
+                            <a class="btn delete-btn" asp-action="Delete" asp-route-id="@item.SupplierId" title="Delete">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    /* Base Container */
+    .data-container {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 0 1.5rem;
+    }
+
+    /* Header Section */
+    .header-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .page-title {
+        color: #2c3e50;
+        font-weight: 600;
+        margin: 0;
+        font-size: 1.8rem;
+    }
+
+    /* Buttons */
+    .action-btn {
+        background-color: #3498db;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+        .action-btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-1px);
+            color: white;
+        }
+
+    /* Table Styles */
+    .table-responsive {
+        overflow-x: auto;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        border-radius: 8px;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+    }
+
+    .header-row {
+        background-color: #3498db;
+        color: white;
+    }
+
+        .header-row th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 500;
+        }
+
+    .data-row td {
+        padding: 1rem;
+        border-bottom: 1px solid #ecf0f1;
+    }
+
+    .data-row:hover {
+        background-color: #f8f9fa;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .edit-btn, .details-btn, .delete-btn {
+        padding: 0.4rem 0.6rem;
+        border: none;
+        border-radius: 4px;
+        color: white;
+        transition: all 0.2s;
+    }
+
+    .edit-btn {
+        background-color: #f39c12;
+    }
+
+        .edit-btn:hover {
+            background-color: #e67e22;
+        }
+
+    .details-btn {
+        background-color: #2ecc71;
+    }
+
+        .details-btn:hover {
+            background-color: #27ae60;
+        }
+
+    .delete-btn {
+        background-color: #e74c3c;
+    }
+
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .header-section {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .action-btn {
+            width: 100%;
+            text-align: center;
+        }
+
+        .data-table {
+            font-size: 0.9rem;
+        }
+
+        .header-row th,
+        .data-row td {
+            padding: 0.75rem 0.5rem;
+        }
+    }
+</style>
+
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">

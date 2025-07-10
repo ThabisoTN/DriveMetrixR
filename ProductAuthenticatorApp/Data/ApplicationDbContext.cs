@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Humanizer.Localisation;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace ProductAuthenticatorApp.Data
@@ -10,8 +11,22 @@ namespace ProductAuthenticatorApp.Data
         {
         }
         public DbSet<ApplicationUser> applicationUsers { set; get; }
-        public DbSet<UserType> UserTypes { get; set; }
-        public DbSet<ProductCategory> ProductCategories { get; set; }
-        public DbSet<Product> Products { set; get; }
+        public DbSet<Supplier> Suppliers { get; set; }
+        public DbSet<Branch> Branches { get; set; }
+        public DbSet<Vehicle> Vehicles { get; set; }
+
+
+
+
+
+
+
+
+
+
+       public DbSet<Client> Clients { get; set; }
+        public DbSet<BranchManager> BranchManagers { get; set; }
+        //public DbSet<Driver> Drivers { get; set; }
+        //public DbSet<Lease> Leases { get; set; }
     }
 }

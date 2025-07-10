@@ -130,6 +130,10 @@ namespace ProductAuthenticatorApp.Areas.Identity.Pages.Account
                         {
                             return RedirectToAction("Index","Admin");
                         }
+                        if (await _userManager.IsInRoleAsync(user, "Client"))
+                        {
+                            return RedirectToAction("Index", "Client");
+                        }
                         else
                         {
                             return RedirectToAction("Index", "User");

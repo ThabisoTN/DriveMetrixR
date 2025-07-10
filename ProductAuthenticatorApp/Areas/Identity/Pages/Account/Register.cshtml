@@ -1,22 +1,19 @@
 ﻿@page
 @model RegisterModel
 @{
-    ViewData["Title"] = "Join AuthoScan";
+    ViewData["Title"] = "Join DriveMatrixR";
 }
 
-<!-- Add icon library -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
     :root {
-        --primary-color: #4361ee;
-        --primary-dark: #3a56d4;
-        --secondary-color: #3f37c9;
-        --light-color: #f8f9fa;
-        --dark-color: #212529;
-        --gray-color: #6c757d;
-        --light-gray: #e9ecef;
-        --success-color: #28a745;
+        --primary: #2563eb;
+        --primary-dark: #1d4ed8;
+        --secondary: #f59e0b;
+        --dark: #1e293b;
+        --light: #f8fafc;
+        --gray: #94a3b8;
     }
 
     .register-container {
@@ -24,8 +21,9 @@
         margin: 2rem auto;
         padding: 2rem;
         background: white;
-        border-radius: 10px;
-        box-shadow: 0 5px 25px rgba(0,0,0,0.08);
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e2e8f0;
     }
 
     .register-header {
@@ -34,14 +32,14 @@
     }
 
     .register-title {
-        color: var(--primary-color);
+        color: var(--primary);
         font-weight: 700;
-        font-size: 2.2rem;
+        font-size: 2rem;
         margin-bottom: 0.5rem;
     }
 
     .register-subtitle {
-        color: var(--gray-color);
+        color: var(--gray);
         font-size: 1.1rem;
     }
 
@@ -58,29 +56,29 @@
     .form-control {
         width: 100%;
         padding: 1rem;
-        border: 2px solid var(--light-gray);
+        border: 1px solid #e2e8f0;
         border-radius: 8px;
         font-size: 1rem;
         transition: all 0.3s ease;
     }
 
         .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.25);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.25);
         }
 
     label {
-        color: var(--gray-color);
+        color: var(--gray);
     }
 
     .btn-register {
-        background-color: var(--primary-color);
+        background-color: var(--primary);
         color: white;
         border: none;
         padding: 1rem;
         border-radius: 8px;
         font-size: 1.1rem;
-        font-weight: 500;
+        font-weight: 600;
         width: 100%;
         cursor: pointer;
         transition: all 0.3s ease;
@@ -90,30 +88,75 @@
         .btn-register:hover {
             background-color: var(--primary-dark);
             transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(67, 97, 238, 0.3);
+            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.3);
         }
 
         .btn-register:disabled {
-            background-color: var(--gray-color);
+            background-color: var(--gray);
             transform: none;
             cursor: not-allowed;
         }
 
-    .user-type-select {
-        width: 100%;
-        padding: 1rem;
-        border: 2px solid var(--light-gray);
-        border-radius: 8px;
-        font-size: 1rem;
-        transition: all 0.3s ease;
+    .business-toggle {
+        display: flex;
+        align-items: center;
         margin-bottom: 1.5rem;
     }
 
-        .user-type-select:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.25);
-            outline: none;
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 30px;
+        margin-right: 1rem;
+    }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
         }
+
+    .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #e2e8f0;
+        transition: .4s;
+        border-radius: 34px;
+    }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+    input:checked + .toggle-slider {
+        background-color: var(--secondary);
+    }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(30px);
+        }
+
+    .business-fields {
+        display: none;
+        background-color: #f8fafc;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        border: 1px solid #e2e8f0;
+    }
 
     .text-danger {
         color: #dc3545;
@@ -125,12 +168,12 @@
     .password-strength {
         margin-top: 0.5rem;
         font-size: 0.85rem;
-        color: var(--gray-color);
+        color: var(--gray);
     }
 
     .strength-meter {
         height: 5px;
-        background: var(--light-gray);
+        background: #e2e8f0;
         margin-top: 0.5rem;
         border-radius: 3px;
         overflow: hidden;
@@ -139,7 +182,6 @@
     .strength-meter-fill {
         height: 100%;
         width: 0%;
-        background: var(--primary-color);
         transition: width 0.3s ease;
     }
 
@@ -159,7 +201,7 @@
 <div class="register-container">
     <div class="register-header">
         <h1 class="register-title">@ViewData["Title"]</h1>
-        <p class="register-subtitle">Create your account to start authenticating products</p>
+        <p class="register-subtitle">Create your account to access premium vehicle leasing</p>
     </div>
 
     <div class="register-form">
@@ -169,16 +211,16 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-floating mb-3">
-                        <input asp-for="Input.Firstname" class="form-control" autocomplete="given-name" aria-required="true" placeholder="John" />
-                        <label asp-for="Input.Firstname">First Name</label>
-                        <span asp-validation-for="Input.Firstname" class="text-danger"></span>
+                        <input asp-for="Input.FirstName" class="form-control" autocomplete="given-name" aria-required="true" placeholder="John" />
+                        <label asp-for="Input.FirstName">First Name</label>
+                        <span asp-validation-for="Input.FirstName" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-floating mb-3">
-                        <input asp-for="Input.Lastname" class="form-control" autocomplete="family-name" aria-required="true" placeholder="Doe" />
-                        <label asp-for="Input.Lastname">Last Name</label>
-                        <span asp-validation-for="Input.Lastname" class="text-danger"></span>
+                        <input asp-for="Input.LastName" class="form-control" autocomplete="family-name" aria-required="true" placeholder="Doe" />
+                        <label asp-for="Input.LastName">Last Name</label>
+                        <span asp-validation-for="Input.LastName" class="text-danger"></span>
                     </div>
                 </div>
             </div>
@@ -189,11 +231,30 @@
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
             </div>
 
-            <div class="form-group mb-3">
-                <select asp-for="Input.UserTypeId" asp-items="Model.UserTypes" class="user-type-select" aria-required="true">
-                    <option value="">Select User Type</option>
-                </select>
-                <span asp-validation-for="Input.UserTypeId" class="text-danger"></span>
+            <div class="business-toggle">
+                <label class="toggle-switch">
+                    <input type="checkbox" asp-for="Input.IsBusinessClient" id="isBusinessClient">
+                    <span class="toggle-slider"></span>
+                </label>
+                <label for="isBusinessClient" style="font-weight: 500; color: var(--dark);">Register as Business Client</label>
+            </div>
+
+            <div id="businessFields" class="business-fields">
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.CompanyName" class="form-control" placeholder="Company Name" />
+                    <label asp-for="Input.CompanyName">Company Name</label>
+                    <span asp-validation-for="Input.CompanyName" class="text-danger"></span>
+                </div>
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.TaxNumber" class="form-control" placeholder="Tax Number" />
+                    <label asp-for="Input.TaxNumber">Tax Number</label>
+                    <span asp-validation-for="Input.TaxNumber" class="text-danger"></span>
+                </div>
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.BusinessAddress" class="form-control" placeholder="Business Address" />
+                    <label asp-for="Input.BusinessAddress">Business Address</label>
+                    <span asp-validation-for="Input.BusinessAddress" class="text-danger"></span>
+                </div>
             </div>
 
             <div class="form-floating mb-3">
@@ -225,6 +286,23 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
+        // Toggle business fields
+        const toggleSwitch = document.getElementById('isBusinessClient');
+        const businessFields = document.getElementById('businessFields');
+
+        toggleSwitch.addEventListener('change', function() {
+            if (this.checked) {
+                businessFields.style.display = 'block';
+            } else {
+                businessFields.style.display = 'none';
+            }
+        });
+
+        // Initialize on page load in case of validation errors
+        if (toggleSwitch.checked) {
+            businessFields.style.display = 'block';
+        }
+
         // Password strength indicator
         function checkPasswordStrength(password) {
             const strengthText = document.getElementById('strength-text');
@@ -256,9 +334,9 @@
                 strengthText.style.color = '#28a745';
             } else if (strength > 2) {
                 strengthMeter.style.width = '66%';
-                strengthMeter.style.backgroundColor = '#ffc107';
+                strengthMeter.style.backgroundColor = '#f59e0b';
                 strengthText.textContent = 'Medium';
-                strengthText.style.color = '#ffc107';
+                strengthText.style.color = '#f59e0b';
             } else {
                 strengthMeter.style.width = '33%';
                 strengthMeter.style.backgroundColor = '#dc3545';
