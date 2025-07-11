@@ -39,24 +39,26 @@ namespace ProductAuthenticatorApp.Services
         }
 
 
-        //Get vehicle by id
-        public async Task<Vehicle> GetVehicleById(int id)
+        //Find Vehicle by Id
+
+        public async Task<Vehicle> GetVehicleById(int vehicleId)
         {
             try
             {
-                return await dbContext.Vehicles
-                    .Include(v => v.Branch)
-                    .Include(v => v.Supplier)
-                    .FirstOrDefaultAsync(v => v.VehicleId == id);
+                var vehicle = await dbContext.Vehicles.FindAsync(vehicleId);
+                if (vehicle == null)
+                {
+                    Console.WriteLine($"Vehicle with ID {vehicleId} not found.");
+                    return null;
+                }
+                return vehicle;
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message, $"Error occurred while getting vehicle with ID {id}");
+                Console.WriteLine(ex.Message, $"Error retrieving vehicle with ID {vehicleId}.");
                 throw;
             }
         }
-
-
 
     }
 }

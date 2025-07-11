@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using ProductAuthenticatorApp.Data;
 using ProductAuthenticatorApp.Service;
 using ProductAuthenticatorApp.Services;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
 namespace ProductAuthenticatorApp.Controllers
@@ -16,16 +18,18 @@ namespace ProductAuthenticatorApp.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IProductService _productService;
         private readonly IVehicleService vehicleService;
+        private readonly IBranchService branchService;
 
         public AdminController(
             ApplicationDbContext dbContext,
             UserManager<ApplicationUser> userManager,
-            IProductService productService, IVehicleService vehicleService)
+            IProductService productService, IVehicleService vehicleService, IBranchService branchService)
         {
             _dbContext = dbContext;
             _userManager = userManager;
             _productService = productService;
             this.vehicleService = vehicleService;
+            this.branchService = branchService;
         }
 
 
@@ -86,61 +90,19 @@ namespace ProductAuthenticatorApp.Controllers
         }
 
 
-
-        [HttpGet]
-        public async Task<IActionResult> AddBranchManager()
+        //View Users
+        public async Task<IActionResult> ViewApplicationUsers()
         {
             try
             {
-                var branches = await _productService.GetBranches();
-                ViewBag.Branches = new SelectList(branches, "BranchId", "Name");
-                return View();
+                var getUsers = await _productService.GetApplicationUsers();
+                return View(getUsers);
             }
             catch (Exception ex)
             {
-                // Log the error properly in production
-                Console.WriteLine($"Error loading branches: {ex.Message}");
-
-                // Provide empty list to prevent null reference
-                ViewBag.Branches = new SelectList(new List<Branch>(), "BranchId", "Name");
-                return View();
+                Console.WriteLine($"Error getting application users: {ex.Message}");
+                return View(new List<ApplicationUser>());
             }
         }
 
-
-        [HttpPost]
-        public async Task<IActionResult> AddBranchManager(
-                string email,
-                string password,
-                string confirmPassword,
-                string firstName,
-                string lastName,
-                int branchId)
-        {
-            try
-            {
-                if (password != confirmPassword)
-                    ModelState.AddModelError("", "Passwords do not match");
-
-                if (!ModelState.IsValid)
-                {
-                    ViewBag.Branches = await _productService.GetBranches();
-                    return View();
-                }
-
-                var newManager = await _productService.AddBranchManager(
-                    email, password, firstName, lastName, branchId);
-
-                TempData["SuccessMessage"] = $"Added new branch manager: {newManager.Email}";
-                return RedirectToAction("Index");
-            }
-            catch (Exception ex)
-            {
-                ViewBag.Branches = await _productService.GetBranches();
-                ModelState.AddModelError("", ex.Message);
-                return View();
-            }
-        }
-
-    }
-}
+    } }

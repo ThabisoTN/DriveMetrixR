@@ -259,10 +259,7 @@
                 <div class="vehicle-details">
                     <h3 class="vehicle-make-model">@vehicle.Make @vehicle.Model</h3>
 
-                 @*    <div class="vehicle-specs">
-                        <span><i class="fas fa-palette"></i> @vehicle.Color</span>
-                        <span><i class="fas fa-tachometer-alt"></i> @(vehicle.Mileage?.ToString("N0") ?? "N/A") mi</span>
-                    </div> *@
+        
 
                     <div class="vehicle-price">@vehicle.LeasingPrice.ToString("C")<span style="font-size: 0.8rem; color: var(--gray);">/month</span></div>
 
@@ -270,8 +267,8 @@
                         <i class="fas fa-map-marker-alt"></i> @vehicle.Branch?.Name
                     </div>
 
-                    <a href="#" class="view-details">
-                        Lease Now <i class="fas fa-chevron-right"></i>
+                    <a href="@Url.Action("ViewVehicle", "Vehicle", new { vehicleId = vehicle.VehicleId })" class="view-details">
+                        View Details <i class="fas fa-chevron-right"></i>
                     </a>
                 </div>
             </div>

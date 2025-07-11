@@ -24,6 +24,8 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
 //register Sevices
 builder.Services.AddScoped<IProductService, AdminService>();
 builder.Services.AddScoped<IVehicleService, VehicleService>();
+builder.Services.AddScoped<IBranchService, BranchService >();
+builder.Services.AddScoped<ILeaseService, LeaseService>();
 
 
 
@@ -47,6 +49,7 @@ using (var scope = app.Services.CreateScope())
         await DbInitializer.SeedSuppliers(context);
         await DbInitializer.SeedBranches(context);
         await DbInitializer.SeedVehicles(context);
+        await DbInitializer.SeedBranchManagers(context, userManager,roleManager);
 
     }
     catch (Exception ex)

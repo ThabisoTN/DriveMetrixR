@@ -134,6 +134,10 @@ namespace ProductAuthenticatorApp.Areas.Identity.Pages.Account
                         {
                             return RedirectToAction("Index", "Client");
                         }
+                        if (await _userManager.IsInRoleAsync(user, "BranchManager"))
+                        {
+                            return RedirectToAction("Index", "Branch");
+                        }
                         else
                         {
                             return RedirectToAction("Index", "User");

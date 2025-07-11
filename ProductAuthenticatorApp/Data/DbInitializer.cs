@@ -333,6 +333,95 @@ namespace ProductAuthenticatorApp.Data
                 }
             }
         }
+
+
+
+        //Seed Branch Managers
+        public static async Task SeedBranchManagers(ApplicationDbContext context,UserManager<ApplicationUser> userManager,RoleManager<IdentityRole> roleManager)
+        {
+            try
+            {
+                // Ensure BranchManager role exists
+                const string roleName = "BranchManager";
+                if (!await roleManager.RoleExistsAsync(roleName))
+                {
+                    await roleManager.CreateAsync(new IdentityRole(roleName));
+                }
+
+                // Check if any branch managers exist
+                if (await context.BranchManagers.AnyAsync())
+                {
+                    Console.WriteLine("Branch managers already exist. Skipping seeding.");
+                    return;
+                }
+
+                // Get all branches
+                var branches = await context.Branches.ToListAsync();
+                if (!branches.Any())
+                {
+                    Console.WriteLine("No branches found. Seed branches first.");
+                    return;
+                }
+
+                // Branch manager data - matches your Branch.Manager names
+                var managerData = new List<(string firstName, string lastName, string email, string branchName)>
+                {
+                    ("Thabo", "Mbeki", "manager@jhb.com", "Johannesburg Main"),
+                    ("Nomsa", "Khumalo", "manager@cpt.com", "Cape Town Coastal"),
+                    ("Raj", "Patel", "manager@dbn.com", "Durban Harbour"),
+                    ("Anna", "van der Merwe", "manager@pt.com", "Pretoria Central"),
+                    ("David", "Williams", "manager@pe.com", "Port Elizabeth East")
+                };
+
+                foreach (var data in managerData)
+                {
+                    var branch = branches.FirstOrDefault(b => b.Name == data.branchName);
+                    if (branch == null) continue;
+
+                    // Create user
+                    var user = new ApplicationUser
+                    {
+                        FirstName = data.firstName,
+                        LastName = data.lastName,
+                        UserName = data.email,
+                        Email = data.email,
+                        EmailConfirmed = true,
+                        IsBusinessClient = false
+                    };
+
+                    // Create with default password
+                    var result = await userManager.CreateAsync(user, "Manager@1234");
+                    if (!result.Succeeded)
+                    {
+                        Console.WriteLine($"Failed to create {data.email}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                        continue;
+                    }
+
+                    // Assign role
+                    await userManager.AddToRoleAsync(user, roleName);
+
+                    // Create branch manager relationship
+                    context.BranchManagers.Add(new BranchManager
+                    {
+                        BranchId = branch.BranchId,
+                        ApplicationuserId = user.Id
+                    });
+
+                    Console.WriteLine($"Created branch manager: {data.email} for {branch.Name}");
+                }
+
+                await context.SaveChangesAsync();
+                Console.WriteLine($"Branch manager seeding completed.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error seeding branch managers: {ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
+                }
+            }
+        }
     }
 }
 

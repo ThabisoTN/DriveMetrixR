@@ -5,6 +5,7 @@ namespace ProductAuthenticatorApp.Services
     public interface IVehicleService
     {
         Task<List<Vehicle>> GetAllVehicles();
-        Task<Vehicle> GetVehicleById(int id);
+        Task<Vehicle> GetVehicleById(int vehicleId);
+
     }
 }

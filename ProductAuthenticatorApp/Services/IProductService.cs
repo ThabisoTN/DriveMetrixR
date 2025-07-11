@@ -10,11 +10,7 @@ namespace ProductAuthenticatorApp.Services
     {
         Task<List<Supplier>> GetSuppliers();
         Task<List<Branch>> GetBranches();
-        Task<ApplicationUser> AddBranchManager(
-          string email,
-          string password,
-          string firstName,
-          string lastName,
-          int branchId);
+   Task<List<ApplicationUser>> GetApplicationUsers();
+        
     }
 }

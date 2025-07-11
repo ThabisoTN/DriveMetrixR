@@ -268,6 +268,30 @@ namespace ProductAuthenticatorApp.Migrations
                     b.ToTable("Branches");
                 });
 
+            modelBuilder.Entity("ProductAuthenticatorApp.Data.BranchManager", b =>
+                {
+                    b.Property<int>("BranchManagerId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BranchManagerId"));
+
+                    b.Property<string>("ApplicationuserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("BranchId")
+                        .HasColumnType("int");
+
+                    b.HasKey("BranchManagerId");
+
+                    b.HasIndex("ApplicationuserId");
+
+                    b.HasIndex("BranchId");
+
+                    b.ToTable("BranchManagers");
+                });
+
             modelBuilder.Entity("ProductAuthenticatorApp.Data.Client", b =>
                 {
                     b.Property<int>("ClientId")
@@ -300,6 +324,112 @@ namespace ProductAuthenticatorApp.Migrations
                     b.HasIndex("ApplicationUserId");
 
                     b.ToTable("Clients");
+                });
+
+            modelBuilder.Entity("ProductAuthenticatorApp.Data.Driver", b =>
+                {
+                    b.Property<int>("DriverId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DriverId"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("DateOfBirth")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("LicenseNumber")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("DriverId");
+
+                    b.ToTable("Drivers");
+                });
+
+            modelBuilder.Entity("ProductAuthenticatorApp.Data.Lease", b =>
+                {
+                    b.Property<int>("LeaseId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LeaseId"));
+
+                    b.Property<DateTime?>("ApprovalDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("BranchId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("DriverId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("DriverId1")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LeaseStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("MonthlyRate")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("RequestDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Terms")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("LeaseId");
+
+                    b.HasIndex("BranchId");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("DriverId");
+
+                    b.HasIndex("DriverId1");
+
+                    b.HasIndex("VehicleId");
+
+                    b.ToTable("Leases");
                 });
 
             modelBuilder.Entity("ProductAuthenticatorApp.Data.Supplier", b =>
@@ -354,7 +484,11 @@ namespace ProductAuthenticatorApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("bit");
+
                     b.Property<decimal>("LeasingPrice")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Make")
@@ -438,6 +572,25 @@ namespace ProductAuthenticatorApp.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ProductAuthenticatorApp.Data.BranchManager", b =>
+                {
+                    b.HasOne("ProductAuthenticatorApp.Data.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationuserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProductAuthenticatorApp.Data.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("Branch");
+                });
+
             modelBuilder.Entity("ProductAuthenticatorApp.Data.Client", b =>
                 {
                     b.HasOne("ProductAuthenticatorApp.Data.ApplicationUser", "ApplicationUser")
@@ -447,6 +600,44 @@ namespace ProductAuthenticatorApp.Migrations
                         .IsRequired();
 
                     b.Navigation("ApplicationUser");
+                });
+
+            modelBuilder.Entity("ProductAuthenticatorApp.Data.Lease", b =>
+                {
+                    b.HasOne("ProductAuthenticatorApp.Data.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ProductAuthenticatorApp.Data.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ProductAuthenticatorApp.Data.Driver", "Driver")
+                        .WithMany()
+                        .HasForeignKey("DriverId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("ProductAuthenticatorApp.Data.Driver", null)
+                        .WithMany("Leases")
+                        .HasForeignKey("DriverId1");
+
+                    b.HasOne("ProductAuthenticatorApp.Data.Vehicle", "Vehicle")
+                        .WithMany()
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Branch");
+
+                    b.Navigation("Client");
+
+                    b.Navigation("Driver");
+
+                    b.Navigation("Vehicle");
                 });
 
             modelBuilder.Entity("ProductAuthenticatorApp.Data.Vehicle", b =>
@@ -466,6 +657,11 @@ namespace ProductAuthenticatorApp.Migrations
                     b.Navigation("Branch");
 
                     b.Navigation("Supplier");
+                });
+
+            modelBuilder.Entity("ProductAuthenticatorApp.Data.Driver", b =>
+                {
+                    b.Navigation("Leases");
                 });
 #pragma warning restore 612, 618
         }

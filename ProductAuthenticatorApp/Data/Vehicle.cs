@@ -16,6 +16,7 @@ namespace ProductAuthenticatorApp.Data
         public DateTime PurchaseDate { get; set; }
         public decimal LeasingPrice { get; set; }
         public string ImagePath { get; set; }
+        public bool IsAvailable { get; set; } = true;   
 
         // Foreign keys
         [ForeignKey("Supplier")]

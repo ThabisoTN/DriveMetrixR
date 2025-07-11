@@ -70,67 +70,109 @@ namespace ProductAuthenticatorApp.Service
             }
         }
 
+        //get all users
+        public async Task<List<ApplicationUser>> GetApplicationUsers()
+        {
+            try
+            {
+                var users = await dbContext.Users.ToListAsync();
+                if (users != null)
+                {
+                    Console.WriteLine("Users Retrieved Successfully");
+                    return users;
+                }
+                return new List<ApplicationUser>();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error Occured When Trying To Get Users : {ex.Message}");
+                throw;
+            }
+        }
+
+
+
+
 
         public async Task<ApplicationUser> AddBranchManager(
-        string email,
-        string password,
-        string firstName,
-        string lastName,
-        int branchId)
+    string email,
+    string password,
+    string firstName,
+    string lastName,
+    int branchId)
         {
-            // Input validation
-            if (string.IsNullOrWhiteSpace(email))
-                throw new ArgumentException("Email is required");
-            if (string.IsNullOrWhiteSpace(password))
-                throw new ArgumentException("Password is required");
+            using var transaction = await dbContext.Database.BeginTransactionAsync();
 
-            // Verify branch exists
-            var branch = await dbContext.Branches.FindAsync(branchId);
-            if (branch == null)
-                throw new ArgumentException("Invalid branch specified");
-
-            // Check for existing user
-            if (await userManager.FindByEmailAsync(email) != null)
-                throw new InvalidOperationException("Email already registered");
-
-            // Create user
-            var user = new ApplicationUser
+            try
             {
-                UserName = email,
-                Email = email,
-                FirstName = firstName,
-                LastName = lastName,
-                EmailConfirmed = true
-            };
+                // Input validation
+                if (string.IsNullOrWhiteSpace(email))
+                    throw new ArgumentException("Email is required");
 
-            // Create with password
-            var result = await userManager.CreateAsync(user, password);
-            if (!result.Succeeded)
-                throw new Exception($"User creation failed: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                if (string.IsNullOrWhiteSpace(password))
+                    throw new ArgumentException("Password is required");
 
-            // Ensure role exists
-            const string roleName = "BranchManager";
-            if (!await roleManager.RoleExistsAsync(roleName))
-                await roleManager.CreateAsync(new IdentityRole(roleName));
+                // Verify branch exists
+                var branch = await dbContext.Branches.FindAsync(branchId);
+                if (branch == null)
+                {
+                    var availableBranches = await dbContext.Branches
+                        .Select(b => new { b.BranchId, b.Name })
+                        .ToListAsync();
 
-            // Assign role
-            var roleResult = await userManager.AddToRoleAsync(user, roleName);
-            if (!roleResult.Succeeded)
-            {
-                await userManager.DeleteAsync(user);
-                throw new Exception("Failed to assign role");
+                    throw new ArgumentException(
+                        $"Invalid branch specified. Available branches: {string.Join(", ", availableBranches.Select(b => $"{b.Name} (ID: {b.BranchId})"))}");
+                }
+
+                // Check for existing user
+                if (await userManager.FindByEmailAsync(email) != null)
+                    throw new InvalidOperationException("Email already registered");
+
+                // Create user
+                var user = new ApplicationUser
+                {
+                    UserName = email,
+                    Email = email,
+                    FirstName = firstName,
+                    LastName = lastName,
+                    EmailConfirmed = true
+                };
+
+                // Create with password
+                var result = await userManager.CreateAsync(user, password);
+                if (!result.Succeeded)
+                    throw new Exception($"User creation failed: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+
+                // Ensure role exists
+                const string roleName = "BranchManager";
+                if (!await roleManager.RoleExistsAsync(roleName))
+                    await roleManager.CreateAsync(new IdentityRole(roleName));
+
+                // Assign role
+                var roleResult = await userManager.AddToRoleAsync(user, roleName);
+                if (!roleResult.Succeeded)
+                {
+                    await userManager.DeleteAsync(user);
+                    throw new Exception("Failed to assign role");
+                }
+
+                // Create relationship
+                dbContext.BranchManagers.Add(new BranchManager
+                {
+                    BranchId = branchId,
+                    ApplicationuserId = user.Id
+                });
+
+                await dbContext.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return user;
             }
-
-            // Create relationship
-            dbContext.BranchManagers.Add(new BranchManager
+            catch
             {
-                BranchId = branchId,
-                ApplicationuserId = user.Id
-            });
-
-            await dbContext.SaveChangesAsync();
-
-            return user;
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
     }
 }

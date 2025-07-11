@@ -1,0 +1,133 @@
+﻿@model ProductAuthenticatorApp.Data.Vehicle
+@using Microsoft.AspNetCore.Mvc.Localization
+
+<div class="container vehicle-details">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3>Vehicle Details</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-sm-4 fw-bold">Make:</div>
+                        <div class="col-sm-8">@Model.Make</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 fw-bold">Model:</div>
+                        <div class="col-sm-8">@Model.Model</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 fw-bold">Year:</div>
+                        <div class="col-sm-8">@Model.Year</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 fw-bold">VIN:</div>
+                        <div class="col-sm-8">@Model.VIN</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 fw-bold">Color:</div>
+                        <div class="col-sm-8">@Model.Color</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 fw-bold">Purchase Date:</div>
+                        <div class="col-sm-8">@Model.PurchaseDate.ToShortDateString()</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 fw-bold">Leasing Price:</div>
+                        <div class="col-sm-8">@Model.LeasingPrice.ToString("C")</div>
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.ImagePath))
+                    {
+                        <div class="row mb-3">
+                            <div class="col-sm-4 fw-bold">Image:</div>
+                            <div class="col-sm-8">
+                                <img src="@Model.ImagePath" alt="Vehicle Image" class="img-thumbnail" style="max-height: 200px;">
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h3>Branch Information</h3>
+                </div>
+                <div class="card-body">
+                    @if (Model.Branch != null)
+                    {
+                        <div class="row mb-3">
+                            <div class="col-sm-4 fw-bold">Branch Name:</div>
+                            <div class="col-sm-8">@Model.Branch.Name</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-4 fw-bold">Location:</div>
+                            <div class="col-sm-8">@Model.Branch.Location</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-4 fw-bold">Manager:</div>
+                            <div class="col-sm-8">@Model.Branch.Manager</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-4 fw-bold">Phone:</div>
+                            <div class="col-sm-8">@Model.Branch.Phone</div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">No branch information available</div>
+                    }
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header bg-secondary text-white">
+                    <h3></h3>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12 text-center">
+            <a asp-action="Create"
+               asp-controller="Lease"
+               asp-route-vehicleId="@Model.VehicleId"
+               class="btn btn-primary btn-lg px-5">
+                <i class="fas fa-car"></i> Lease This Vehicle
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .vehicle-details {
+        margin-top: 30px;
+        margin-bottom: 50px;
+    }
+
+    .card {
+        margin-bottom: 20px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        border: none;
+    }
+
+    .card-header {
+        padding: 15px 20px;
+        border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .btn-lg {
+        padding: 10px 30px;
+        font-size: 1.1rem;
+        margin-top: 20px;
+    }
+
+    .img-thumbnail {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+    }
+</style>
