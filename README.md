@@ -3,8 +3,8 @@
 
 📄 **Release Notes**
 **Project Name:** DriveMetrixR – Vehicle Leasing Management System
-**Developer:** \Thabiso Ngubane
-**Date:** \11/07/2025
+**Developer:** Thabiso Ngubane
+**Date:** 11/07/2025
 **Framework:** ASP.NET MVC (.NET Framework)
 **Database:** Microsoft SQL Server (Code-First)
 
