@@ -1,4 +1,3 @@
-Here’s a sample **Release Notes** document tailored for your vehicle leasing MVC application:
 
 ---
 
@@ -86,5 +85,3 @@ DriveMetrixR is a web-based system designed for a vehicle leasing company to tra
 * Vehicle maintenance tracking module
 
 ---
-
-Let me know if you want this saved into a `.docx` or `.txt` file for emailing.
