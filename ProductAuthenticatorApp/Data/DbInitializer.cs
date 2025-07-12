@@ -71,7 +71,7 @@ namespace ProductAuthenticatorApp.Data
         {
             try
             {
-                // First ensure database is created and migrated
+                
                 await dbcontext.Database.EnsureCreatedAsync();
 
                 if (await dbcontext.Suppliers.AnyAsync())
@@ -205,7 +205,7 @@ namespace ProductAuthenticatorApp.Data
         {
             try
             {
-                // First ensure database is created and migrated
+            
                 await context.Database.EnsureCreatedAsync();
 
                 if (await context.Vehicles.AnyAsync())
@@ -214,7 +214,7 @@ namespace ProductAuthenticatorApp.Data
                     return;
                 }
 
-                // Get existing branches and suppliers to assign to vehicles
+                
                 var branches = await context.Branches.ToListAsync();
                 var suppliers = await context.Suppliers.ToListAsync();
 
@@ -236,8 +236,8 @@ namespace ProductAuthenticatorApp.Data
                 PurchaseDate = DateTime.Parse("2022-03-15"),
                 LeasingPrice = 8500.00m,
                 ImagePath = "/Images/BMW 320I.jpg",
-                SupplierId = suppliers[0].SupplierId, // BMW Durban
-                BranchId = branches[2].BranchId // Durban Harbour
+                SupplierId = suppliers[0].SupplierId, 
+                BranchId = branches[2].BranchId 
             },
             new Vehicle
             {
@@ -249,8 +249,8 @@ namespace ProductAuthenticatorApp.Data
                 PurchaseDate = DateTime.Parse("2023-01-10"),
                 LeasingPrice = 6500.00m,
                 ImagePath = "/Images/Toyota Corola.jpg",
-                SupplierId = suppliers[1].SupplierId, // Toyota Johannesburg
-                BranchId = branches[0].BranchId // Johannesburg Main
+                SupplierId = suppliers[1].SupplierId, 
+                BranchId = branches[0].BranchId 
             },
             new Vehicle
             {
@@ -262,8 +262,8 @@ namespace ProductAuthenticatorApp.Data
                 PurchaseDate = DateTime.Parse("2022-07-22"),
                 LeasingPrice = 5500.00m,
                 ImagePath = "/Images/VW Polo.jpg",
-                SupplierId = suppliers[2].SupplierId, // VW Cape Town
-                BranchId = branches[1].BranchId // Cape Town Coastal
+                SupplierId = suppliers[2].SupplierId, 
+                BranchId = branches[1].BranchId 
             },
             new Vehicle
             {
@@ -275,8 +275,8 @@ namespace ProductAuthenticatorApp.Data
                 PurchaseDate = DateTime.Parse("2023-02-18"),
                 LeasingPrice = 9500.00m,
                 ImagePath = "/Images/Mercedes CL200.jpg",
-                SupplierId = suppliers[3].SupplierId, // Mercedes-Benz Pretoria
-                BranchId = branches[3].BranchId // Pretoria Central
+                SupplierId = suppliers[3].SupplierId, 
+                BranchId = branches[3].BranchId 
             },
             new Vehicle
             {
@@ -288,8 +288,8 @@ namespace ProductAuthenticatorApp.Data
                 PurchaseDate = DateTime.Parse("2022-11-05"),
                 LeasingPrice = 6000.00m,
                 ImagePath = "/Images/Nissani QashQai.jpg",
-                SupplierId = suppliers[4].SupplierId, // Nissan Port Elizabeth
-                BranchId = branches[4].BranchId // Port Elizabeth East
+                SupplierId = suppliers[4].SupplierId, 
+                BranchId = branches[4].BranchId 
             },
             new Vehicle
             {
@@ -301,8 +301,8 @@ namespace ProductAuthenticatorApp.Data
                 PurchaseDate = DateTime.Parse("2023-04-12"),
                 LeasingPrice = 10500.00m,
                 ImagePath = "/Images/BMW X3.jpg",
-                SupplierId = suppliers[0].SupplierId, // BMW Durban
-                BranchId = branches[0].BranchId // Johannesburg Main
+                SupplierId = suppliers[0].SupplierId, 
+                BranchId = branches[0].BranchId 
             },
             new Vehicle
             {
@@ -314,8 +314,8 @@ namespace ProductAuthenticatorApp.Data
                 PurchaseDate = DateTime.Parse("2022-09-30"),
                 LeasingPrice = 7500.00m,
                 ImagePath = "/Images/Toyota Hilux.jpg",
-                SupplierId = suppliers[1].SupplierId, // Toyota Johannesburg
-                BranchId = branches[3].BranchId // Pretoria Central
+                SupplierId = suppliers[1].SupplierId, 
+                BranchId = branches[3].BranchId 
             }
         };
 
@@ -341,21 +341,19 @@ namespace ProductAuthenticatorApp.Data
         {
             try
             {
-                // Ensure BranchManager role exists
+               
                 const string roleName = "BranchManager";
                 if (!await roleManager.RoleExistsAsync(roleName))
                 {
                     await roleManager.CreateAsync(new IdentityRole(roleName));
                 }
 
-                // Check if any branch managers exist
                 if (await context.BranchManagers.AnyAsync())
                 {
                     Console.WriteLine("Branch managers already exist. Skipping seeding.");
                     return;
                 }
 
-                // Get all branches
                 var branches = await context.Branches.ToListAsync();
                 if (!branches.Any())
                 {
@@ -363,7 +361,7 @@ namespace ProductAuthenticatorApp.Data
                     return;
                 }
 
-                // Branch manager data - matches your Branch.Manager names
+                
                 var managerData = new List<(string firstName, string lastName, string email, string branchName)>
                 {
                     ("Thabo", "Mbeki", "manager@jhb.com", "Johannesburg Main"),
@@ -378,7 +376,7 @@ namespace ProductAuthenticatorApp.Data
                     var branch = branches.FirstOrDefault(b => b.Name == data.branchName);
                     if (branch == null) continue;
 
-                    // Create user
+                   
                     var user = new ApplicationUser
                     {
                         FirstName = data.firstName,
@@ -389,7 +387,7 @@ namespace ProductAuthenticatorApp.Data
                         IsBusinessClient = false
                     };
 
-                    // Create with default password
+                    
                     var result = await userManager.CreateAsync(user, "Manager@1234");
                     if (!result.Succeeded)
                     {
@@ -397,10 +395,8 @@ namespace ProductAuthenticatorApp.Data
                         continue;
                     }
 
-                    // Assign role
                     await userManager.AddToRoleAsync(user, roleName);
 
-                    // Create branch manager relationship
                     context.BranchManagers.Add(new BranchManager
                     {
                         BranchId = branch.BranchId,

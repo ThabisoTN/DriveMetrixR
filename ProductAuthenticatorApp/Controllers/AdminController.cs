@@ -131,6 +131,10 @@ namespace ProductAuthenticatorApp.Controllers
             }
         }
 
+
+
+
+        //View Suppliers
         [HttpGet]
         public async Task<IActionResult> ViewSuppliers()
         {
@@ -155,6 +159,8 @@ namespace ProductAuthenticatorApp.Controllers
             }
         }
 
+
+        //View Branches
         [HttpGet]
         public async Task<IActionResult> ViewBranches()
         {

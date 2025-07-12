@@ -27,6 +27,8 @@ namespace ProductAuthenticatorApp.Controllers
         }
 
 
+        //View Lease requests.
+
         [HttpGet]
         public async Task<IActionResult> ViewBranchLeases()
         {
@@ -48,6 +50,8 @@ namespace ProductAuthenticatorApp.Controllers
         }
 
 
+
+        /// Update the status of a lease request.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateLeaseStatus(int leaseId, string status)

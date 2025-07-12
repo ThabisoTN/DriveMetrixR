@@ -25,7 +25,7 @@ namespace ProductAuthenticatorApp.Controllers
             return View();
         }
 
-
+        //View all vehicles
         public async Task<IActionResult> ViewVehicle(int vehicleId)
         {
             try

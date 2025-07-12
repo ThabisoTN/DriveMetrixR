@@ -22,6 +22,7 @@ public class LeaseController : Controller
         this._context = _context;
     }
 
+    //Create Lease View
     [HttpGet]
     public IActionResult Create(int vehicleId)
     {
@@ -41,6 +42,8 @@ public class LeaseController : Controller
         return View();
     }
 
+
+    //Create Lease
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(Microsoft.AspNetCore.Http.IFormCollection form)
@@ -62,7 +65,7 @@ public class LeaseController : Controller
 
             using var transaction = await _context.Database.BeginTransactionAsync();
 
-            // 1. Create Driver
+           
             var driver = new Driver
             {
                 Name = form["Driver.Name"],
@@ -76,14 +79,14 @@ public class LeaseController : Controller
             _context.Drivers.Add(driver);
             await _context.SaveChangesAsync();
 
-            // 2. Create Lease
+            
             var lease = new Lease
             {
                 StartDate = DateTime.Parse(form["StartDate"]),
                 EndDate = string.IsNullOrEmpty(form["EndDate"]) ? (DateTime?)null : DateTime.Parse(form["EndDate"]),
                 Terms = form["Terms"],
                 VehicleId = vehicleId,
-                BranchId = vehicle.BranchId,  // ✅ This requires column to exist
+                BranchId = vehicle.BranchId,  
                 ClientId = client.ClientId,
                 DriverId = driver.DriverId,
                 MonthlyRate = vehicle.LeasingPrice,
@@ -96,7 +99,7 @@ public class LeaseController : Controller
             _context.Leases.Add(lease);
             await _context.SaveChangesAsync();
 
-            // 3. Mark vehicle as unavailable
+            
             vehicle.IsAvailable = false;
             await _context.SaveChangesAsync();
 
@@ -108,7 +111,6 @@ public class LeaseController : Controller
         {
             var inner = ex.InnerException?.Message ?? ex.Message;
             ModelState.AddModelError("", $"An error occurred: {inner}");
-            //await RepopulateViewData(int.Parse(form["VehicleId"]));
             return View();
         }
 

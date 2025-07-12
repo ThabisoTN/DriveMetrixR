@@ -56,7 +56,7 @@ namespace ProductAuthenticatorApp.Areas.Identity.Pages.Account
 
         public class InputModel
         {
-            // Personal Information (goes to ApplicationUser)
+         
             [Required]
             [Display(Name = "First Name")]
             public string FirstName { get; set; }
@@ -81,7 +81,7 @@ namespace ProductAuthenticatorApp.Areas.Identity.Pages.Account
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
 
-            // Business Information (goes to Client table if IsBusinessClient is true)
+           
             [Display(Name = "Register as Business Client?")]
             public bool IsBusinessClient { get; set; }
 
@@ -98,7 +98,7 @@ namespace ProductAuthenticatorApp.Areas.Identity.Pages.Account
             public string BusinessAddress { get; set; }
         }
 
-        // Custom validation attribute for business client fields
+        
         public class RequiredIfBusinessClientAttribute : ValidationAttribute
         {
             protected override ValidationResult IsValid(object value, ValidationContext validationContext)
@@ -140,10 +140,10 @@ namespace ProductAuthenticatorApp.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
 
-                    // Assign "Client" role
+                  
                     await _userManager.AddToRoleAsync(user, "Client");
 
-                    // If business client, create Client record
+                 
                     if (Input.IsBusinessClient)
                     {
                         var client = new Client

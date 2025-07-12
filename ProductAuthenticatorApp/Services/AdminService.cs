@@ -94,25 +94,20 @@ namespace ProductAuthenticatorApp.Service
 
 
 
-        public async Task<ApplicationUser> AddBranchManager(
-    string email,
-    string password,
-    string firstName,
-    string lastName,
-    int branchId)
+        public async Task<ApplicationUser> AddBranchManager( string email,string password,string firstName, string lastName, int branchId)
         {
             using var transaction = await dbContext.Database.BeginTransactionAsync();
 
             try
             {
-                // Input validation
+                
                 if (string.IsNullOrWhiteSpace(email))
                     throw new ArgumentException("Email is required");
 
                 if (string.IsNullOrWhiteSpace(password))
                     throw new ArgumentException("Password is required");
 
-                // Verify branch exists
+          
                 var branch = await dbContext.Branches.FindAsync(branchId);
                 if (branch == null)
                 {
@@ -124,11 +119,13 @@ namespace ProductAuthenticatorApp.Service
                         $"Invalid branch specified. Available branches: {string.Join(", ", availableBranches.Select(b => $"{b.Name} (ID: {b.BranchId})"))}");
                 }
 
-                // Check for existing user
-                if (await userManager.FindByEmailAsync(email) != null)
-                    throw new InvalidOperationException("Email already registered");
 
-                // Create user
+                if (await userManager.FindByEmailAsync(email) != null)
+                {
+                    throw new InvalidOperationException("Email already registered");
+                }
+
+                
                 var user = new ApplicationUser
                 {
                     UserName = email,
@@ -138,17 +135,20 @@ namespace ProductAuthenticatorApp.Service
                     EmailConfirmed = true
                 };
 
-                // Create with password
+                
                 var result = await userManager.CreateAsync(user, password);
                 if (!result.Succeeded)
+                {
                     throw new Exception($"User creation failed: {string.Join(", ", result.Errors.Select(e => e.Description))}");
-
-                // Ensure role exists
+                }
+                
                 const string roleName = "BranchManager";
                 if (!await roleManager.RoleExistsAsync(roleName))
+                {
                     await roleManager.CreateAsync(new IdentityRole(roleName));
+                }
 
-                // Assign role
+                
                 var roleResult = await userManager.AddToRoleAsync(user, roleName);
                 if (!roleResult.Succeeded)
                 {
@@ -156,7 +156,7 @@ namespace ProductAuthenticatorApp.Service
                     throw new Exception("Failed to assign role");
                 }
 
-                // Create relationship
+                
                 dbContext.BranchManagers.Add(new BranchManager
                 {
                     BranchId = branchId,

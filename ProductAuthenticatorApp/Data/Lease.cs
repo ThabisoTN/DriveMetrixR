@@ -18,25 +18,18 @@ namespace ProductAuthenticatorApp.Data
 
         
         public DateTime RequestDate { get; set; } = DateTime.Now;
-
-       
         public DateTime? ApprovalDate { get; set; }
-
-       
         public bool IsActive { get; set; } = true;
-
         public decimal MonthlyRate { get; set; }
-
         public string ClientUserId { get; set; }
+
+
 
         public int BranchId { get; set; }
         public int VehicleId { get; set; }
         public virtual Vehicle Vehicle { get; set; }
-
-  
         public int ClientId { get; set; }
         public virtual Client Client { get; set; }
-
         public int DriverId { get; set; }
         public virtual Driver Driver { get; set; }
     }
