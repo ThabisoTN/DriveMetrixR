@@ -36,8 +36,99 @@ namespace ProductAuthenticatorApp.Controllers
         //Landing page for admin dashboard
         public async Task<IActionResult> Index()
         {
-            var vehicles = await vehicleService.GetAllVehicles();
-            return View(vehicles);
+            try
+            {
+                
+                var vehiclesBySupplier = await _dbContext.Vehicles
+                    .Include(v => v.Supplier)
+                    .GroupBy(v => v.Supplier.Name)
+                    .Select(g => new
+                    {
+                        Supplier = g.Key,
+                        VehicleCount = g.Count(),
+                        PopularMake = g.GroupBy(v => v.Make)
+                            .OrderByDescending(mg => mg.Count())
+                            .Select(mg => mg.Key)
+                            .FirstOrDefault(),
+                        TotalValue = g.Sum(v => v.LeasingPrice)
+                    })
+                    .ToListAsync();
+
+                
+                var vehiclesByBranch = await _dbContext.Vehicles
+                    .Include(v => v.Branch)
+                    .GroupBy(v => v.Branch.Name)
+                    .Select(g => new
+                    {
+                        Branch = g.Key,
+                        TotalVehicles = g.Count(),
+                        Available = g.Count(v => v.IsAvailable),
+                        Leased = g.Count(v => !v.IsAvailable)
+                    })
+                    .ToListAsync();
+
+                
+                var leasesByClient = await _dbContext.Leases
+                    .Include(l => l.Client)
+                    .Include(l => l.Vehicle)
+                    .Where(l => l.IsActive)
+                    .GroupBy(l => l.Client.CompanyName)
+                    .Select(g => new
+                    {
+                        Client = g.Key,
+                        ActiveLeases = g.Count(),
+                        Vehicles = string.Join(", ", g.Select(l => $"{l.Vehicle.Make} {l.Vehicle.Model}")),
+                        MonthlyTotal = g.Sum(l => l.MonthlyRate)
+                    })
+                    .ToListAsync();
+
+             
+                var recentLeases = await _dbContext.Leases
+                    .Include(l => l.Client)
+                    .Include(l => l.Vehicle)
+                    .OrderByDescending(l => l.StartDate)
+                    .Take(5)
+                    .Select(l => new
+                    {
+                        Vehicle = $"{l.Vehicle.Make} {l.Vehicle.Model}",
+                        Client = l.Client.CompanyName,
+                        StartDate = l.StartDate,
+                        Status = l.LeaseStatus
+                    })
+                    .ToListAsync();
+
+                
+                var vehicleDistribution = await _dbContext.Vehicles
+                    .GroupBy(v => v.Make)
+                    .Select(g => new
+                    {
+                        Make = g.Key,
+                        Count = g.Count()
+                    })
+                    .ToListAsync();
+
+                
+                ViewData["VehiclesBySupplier"] = vehiclesBySupplier;
+                ViewData["VehiclesByBranch"] = vehiclesByBranch;
+                ViewData["LeasesByClient"] = leasesByClient;
+                ViewData["RecentLeases"] = recentLeases;
+                ViewData["VehicleDistribution"] = vehicleDistribution;
+                ViewData["TotalVehicles"] = await _dbContext.Vehicles.CountAsync();
+                ViewData["TotalSuppliers"] = await _dbContext.Suppliers.CountAsync();
+                ViewData["TotalBranches"] = await _dbContext.Branches.CountAsync();
+                ViewData["ActiveClients"] = await _dbContext.Leases
+                    .Where(l => l.IsActive)
+                    .Select(l => l.ClientId)
+                    .Distinct()
+                    .CountAsync();
+
+                return View();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine( "Error loading dashboard data");
+                return View("Error");
+            }
         }
 
         [HttpGet]
