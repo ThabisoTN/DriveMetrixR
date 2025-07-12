@@ -41,17 +41,17 @@ namespace ProductAuthenticatorApp.Services
         }
 
 
-        //Get Requests
-        //public async Task<List<Lease>> GetLeasesByBranch(int branchId)
-        //{
-        //    return await dbContext.Leases
-        //        .Include(l => l.Vehicle)
-        //        .Include(l => l.Client)
-        //            .ThenInclude(c => c.ApplicationUser)
-        //        .Include(l => l.Driver)
-        //        .Where(l => l.BranchId == branchId)
-        //        .OrderByDescending(l => l.RequestDate)
-        //        .ToListAsync();
-        //}
+       // Get Requests
+        public async Task<List<Lease>> GetLeasesByBranch(int branchId)
+        {
+            return await dbContext.Leases
+                .Include(l => l.Vehicle)
+                .Include(l => l.Client)
+                    .ThenInclude(c => c.ApplicationUser)
+                .Include(l => l.Driver)
+                .Where(l => l.BranchId == branchId)
+                .OrderByDescending(l => l.RequestDate)
+                .ToListAsync();
+        }
     }
 }
