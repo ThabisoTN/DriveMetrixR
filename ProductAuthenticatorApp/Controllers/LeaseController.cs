@@ -8,16 +8,13 @@ using ProductAuthenticatorApp.Services;
 [Authorize]
 public class LeaseController : Controller
 {
-    private readonly ILeaseService leaseService;
+    
     private readonly UserManager<ApplicationUser> userManager;
     private readonly ApplicationDbContext _context;
 
-    public LeaseController(
-        ILeaseService leaseService,
-        UserManager<ApplicationUser> userManager,
-        ApplicationDbContext _context)
+    public LeaseController(UserManager<ApplicationUser> userManager,ApplicationDbContext _context)
     {
-        this.leaseService = leaseService;
+       
         this.userManager = userManager;
         this._context = _context;
     }

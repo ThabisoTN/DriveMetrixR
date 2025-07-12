@@ -25,7 +25,7 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
 builder.Services.AddScoped<IProductService, AdminService>();
 builder.Services.AddScoped<IVehicleService, VehicleService>();
 builder.Services.AddScoped<IBranchService, BranchService >();
-builder.Services.AddScoped<ILeaseService, LeaseService>();
+
 
 builder.Services.AddAuthorization(options =>
 {
