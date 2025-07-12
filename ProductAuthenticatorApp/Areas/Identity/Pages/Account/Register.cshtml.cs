@@ -152,6 +152,7 @@ namespace ProductAuthenticatorApp.Areas.Identity.Pages.Account
                             CompanyName = Input.CompanyName,
                             TaxNumber = Input.TaxNumber,
                             Address = Input.BusinessAddress
+                           
                         };
 
                         _context.Clients.Add(client);

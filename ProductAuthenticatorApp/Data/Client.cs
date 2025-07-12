@@ -8,22 +8,13 @@ namespace ProductAuthenticatorApp.Data
     {
         [Key]
         public int ClientId { get; set; }
-
-        [Required]
-        [StringLength(100)]
-        [Display(Name = "Company Name")]
         public string CompanyName { get; set; }
-
-        [StringLength(200)]
         public string Address { get; set; }
-
-        [StringLength(50)]
         public string TaxNumber { get; set; }
 
-        [Required]
-        public string ApplicationUserId { get; set; }  // This must match the IdentityUser Id type
 
-        [ForeignKey("ApplicationUserId")]
+
+        public string ApplicationUserId { get; set; }
         public ApplicationUser ApplicationUser { get; set; }
     }
 }

@@ -27,24 +27,24 @@ namespace ProductAuthenticatorApp.Controllers
         }
 
 
-        [HttpGet]
-        public async Task<IActionResult> ViewBranchLeases()
-        {
-            var currentUserId = _userManager.GetUserId(User);
+        //[HttpGet]
+        //public async Task<IActionResult> ViewBranchLeases()
+        //{
+        //    var currentUserId = _userManager.GetUserId(User);
 
-            var branchManager = await _dbContext.BranchManagers
-                .Include(bm => bm.Branch)
-                .FirstOrDefaultAsync(bm => bm.ApplicationuserId == currentUserId);
+        //    var branchManager = await _dbContext.BranchManagers
+        //        .Include(bm => bm.Branch)
+        //        .FirstOrDefaultAsync(bm => bm.ApplicationuserId == currentUserId);
 
-            if (branchManager == null)
-            {
-                return Forbid(); 
-            }
+        //    if (branchManager == null)
+        //    {
+        //        return Forbid(); 
+        //    }
 
-            var leases = await _branchService.GetLeasesByBranch(branchManager.BranchId);
-            ViewBag.BranchName = branchManager.Branch.Name;
+        //    var leases = await _branchService.GetLeasesByBranch(branchManager.BranchId);
+        //    ViewBag.BranchName = branchManager.Branch.Name;
 
-            return View(leases);
-        }
+        //    return View(leases);
+        //}
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProductAuthenticatorApp.Data;
 
@@ -11,9 +12,11 @@ using ProductAuthenticatorApp.Data;
 namespace ProductAuthenticatorApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250712101231_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -369,12 +372,12 @@ namespace ProductAuthenticatorApp.Migrations
                     b.Property<int>("BranchId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ClientId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ClientUserId")
+                    b.Property<string>("ClientId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ClientId1")
+                        .HasColumnType("int");
 
                     b.Property<int>("DriverId")
                         .HasColumnType("int");
@@ -407,7 +410,7 @@ namespace ProductAuthenticatorApp.Migrations
 
                     b.HasKey("LeaseId");
 
-                    b.HasIndex("ClientId");
+                    b.HasIndex("ClientId1");
 
                     b.HasIndex("DriverId");
 
@@ -589,7 +592,7 @@ namespace ProductAuthenticatorApp.Migrations
                 {
                     b.HasOne("ProductAuthenticatorApp.Data.Client", "Client")
                         .WithMany()
-                        .HasForeignKey("ClientId")
+                        .HasForeignKey("ClientId1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

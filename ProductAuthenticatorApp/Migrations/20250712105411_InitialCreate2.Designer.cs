@@ -12,8 +12,8 @@ using ProductAuthenticatorApp.Data;
 namespace ProductAuthenticatorApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250711203948_ClienytTableApplicationUserId2345")]
-    partial class ClienytTableApplicationUserId2345
+    [Migration("20250712105411_InitialCreate2")]
+    partial class InitialCreate2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -248,23 +248,19 @@ namespace ProductAuthenticatorApp.Migrations
 
                     b.Property<string>("Location")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Manager")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("BranchId");
 
@@ -305,8 +301,7 @@ namespace ProductAuthenticatorApp.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ApplicationUserId")
                         .IsRequired()
@@ -314,13 +309,11 @@ namespace ProductAuthenticatorApp.Migrations
 
                     b.Property<string>("CompanyName")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TaxNumber")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ClientId");
 
@@ -339,31 +332,26 @@ namespace ProductAuthenticatorApp.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LicenseNumber")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("DriverId");
 
@@ -387,10 +375,11 @@ namespace ProductAuthenticatorApp.Migrations
                     b.Property<int>("ClientId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("DriverId")
-                        .HasColumnType("int");
+                    b.Property<string>("ClientUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("DriverId1")
+                    b.Property<int>("DriverId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("EndDate")
@@ -414,21 +403,16 @@ namespace ProductAuthenticatorApp.Migrations
 
                     b.Property<string>("Terms")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("VehicleId")
                         .HasColumnType("int");
 
                     b.HasKey("LeaseId");
 
-                    b.HasIndex("BranchId");
-
                     b.HasIndex("ClientId");
 
                     b.HasIndex("DriverId");
-
-                    b.HasIndex("DriverId1");
 
                     b.HasIndex("VehicleId");
 
@@ -491,7 +475,6 @@ namespace ProductAuthenticatorApp.Migrations
                         .HasColumnType("bit");
 
                     b.Property<decimal>("LeasingPrice")
-                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Make")
@@ -607,34 +590,23 @@ namespace ProductAuthenticatorApp.Migrations
 
             modelBuilder.Entity("ProductAuthenticatorApp.Data.Lease", b =>
                 {
-                    b.HasOne("ProductAuthenticatorApp.Data.Branch", "Branch")
-                        .WithMany()
-                        .HasForeignKey("BranchId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("ProductAuthenticatorApp.Data.Client", "Client")
                         .WithMany()
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ProductAuthenticatorApp.Data.Driver", "Driver")
                         .WithMany()
                         .HasForeignKey("DriverId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("ProductAuthenticatorApp.Data.Driver", null)
-                        .WithMany("Leases")
-                        .HasForeignKey("DriverId1");
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ProductAuthenticatorApp.Data.Vehicle", "Vehicle")
                         .WithMany()
                         .HasForeignKey("VehicleId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Branch");
 
                     b.Navigation("Client");
 
@@ -660,11 +632,6 @@ namespace ProductAuthenticatorApp.Migrations
                     b.Navigation("Branch");
 
                     b.Navigation("Supplier");
-                });
-
-            modelBuilder.Entity("ProductAuthenticatorApp.Data.Driver", b =>
-                {
-                    b.Navigation("Leases");
                 });
 #pragma warning restore 612, 618
         }

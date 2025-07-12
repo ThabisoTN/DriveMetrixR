@@ -1,97 +1,131 @@
-﻿@{
-    ViewData["Title"] = "Create Lease Request";
+﻿@model ProductAuthenticatorApp.Data.Lease
+
+@{
+    ViewData["Title"] = "Create Lease";
+    var vehicleInfo = ViewBag.VehicleInfo as string ?? "N/A";
+    var branchName = ViewBag.BranchName as string ?? "N/A";
+    var monthlyRate = ViewBag.MonthlyRate != null ? ((decimal)ViewBag.MonthlyRate).ToString("C") : "N/A";
+    var vehicleId = ViewBag.VehicleId ?? 0;
 }
 
 <div class="container mt-4">
-    <div class="card">
-        <div class="card-header bg-primary text-white">
-            <h3>@ViewData["Title"]</h3>
+    <h2 class="mb-4">Create Lease</h2>
+
+    <form asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+        <!-- Vehicle Info Section -->
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Vehicle Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="font-weight-bold">Vehicle:</label>
+                            <p>@vehicleInfo</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="font-weight-bold">Branch:</label>
+                            <p>@branchName</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="font-weight-bold">Monthly Rate:</label>
+                            <p>@monthlyRate</p>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" name="VehicleId" value="@vehicleId" />
+            </div>
         </div>
-        <div class="card-body">
-            <form asp-action="Create" method="post">
-                <input type="hidden" name="vehicleId" value="@ViewBag.VehicleId" />
+
+        <!-- Lease Info Section -->
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Lease Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="StartDate">Start Date</label>
+                            <input type="date" name="StartDate" class="form-control" required />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="EndDate">End Date</label>
+                            <input type="date" name="EndDate" class="form-control" required />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="Terms">Terms</label>
+                    <textarea name="Terms" class="form-control" rows="3"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Driver Info Section -->
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Driver Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="Driver.Name">Full Name</label>
+                            <input name="Driver.Name" class="form-control" required />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="Driver.LicenseNumber">License Number</label>
+                            <input name="Driver.LicenseNumber" class="form-control" required />
+                        </div>
+                    </div>
+                </div>
 
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="driverName">Driver Full Name</label>
-                            <input type="text" class="form-control" id="driverName" name="driverName" required>
+                            <label for="Driver.Email">Email</label>
+                            <input name="Driver.Email" class="form-control" type="email" required />
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="driverLicenseNumber">Driver License Number</label>
-                            <input type="text" class="form-control" id="driverLicenseNumber" name="driverLicenseNumber" required>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="driverEmail">Driver Email</label>
-                            <input type="email" class="form-control" id="driverEmail" name="driverEmail">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="driverPhone">Driver Phone</label>
-                            <input type="tel" class="form-control" id="driverPhone" name="driverPhone">
+                            <label for="Driver.Phone">Phone</label>
+                            <input name="Driver.Phone" class="form-control" required />
                         </div>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="driverAddress">Driver Address</label>
-                    <input type="text" class="form-control" id="driverAddress" name="driverAddress">
+                    <label for="Driver.Address">Address</label>
+                    <textarea name="Driver.Address" class="form-control" rows="2" required></textarea>
                 </div>
 
                 <div class="form-group">
-                    <label for="driverDateOfBirth">Driver Date of Birth</label>
-                    <input type="date" class="form-control" id="driverDateOfBirth" name="driverDateOfBirth">
+                    <label for="Driver.DateOfBirth">Date of Birth</label>
+                    <input name="Driver.DateOfBirth" class="form-control" type="date" required />
                 </div>
-
-                <div class="row mt-4">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="startDate">Lease Start Date</label>
-                            <input type="date" class="form-control" id="startDate" name="startDate"
-                                   value="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" required>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="endDate">Lease End Date (Optional)</label>
-                            <input type="date" class="form-control" id="endDate" name="endDate">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="terms">Special Terms (Optional)</label>
-                    <textarea class="form-control" id="terms" name="terms" rows="3"></textarea>
-                </div>
-
-                <div class="form-group mt-4">
-                    <button type="submit" class="btn btn-primary">Submit Lease Request</button>
-                    <a asp-controller="Vehicle" asp-action="Index" class="btn btn-secondary">Cancel</a>
-                </div>
-            </form>
+            </div>
         </div>
-    </div>
+
+        <div class="form-group text-right">
+            <button type="submit" class="btn btn-primary">Submit Lease Request</button>
+        </div>
+    </form>
 </div>
 
 @section Scripts {
-    <script>
-        // Client-side validation
-        document.querySelector('form').addEventListener('submit', function(e) {
-            const startDate = new Date(document.getElementById('startDate').value);
-            const endDate = document.getElementById('endDate').value;
-
-            if (endDate && new Date(endDate) < startDate) {
-                e.preventDefault();
-                alert('End date must be after start date');
-            }
-        });
-    </script>
+    @await Html.PartialAsync("_ValidationScriptsPartial")
 }

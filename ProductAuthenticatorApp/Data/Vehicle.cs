@@ -18,15 +18,10 @@ namespace ProductAuthenticatorApp.Data
         public string ImagePath { get; set; }
         public bool IsAvailable { get; set; } = true;   
 
-        // Foreign keys
-        [ForeignKey("Supplier")]
+       
         public int SupplierId { get; set; }
-
-        [ForeignKey("Branch")]
-        public int BranchId { get; set; }
-
-        // Navigation properties
         public virtual Supplier Supplier { get; set; }
+        public int BranchId { get; set; }
         public virtual Branch Branch { get; set; }
     }
 }

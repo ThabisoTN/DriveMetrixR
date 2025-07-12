@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ProductAuthenticatorApp.Data;
+using ProductAuthenticatorApp.Models;
 using ProductAuthenticatorApp.Services;
+using System.Diagnostics;
 
 namespace ProductAuthenticatorApp.Controllers
 {
@@ -22,6 +25,9 @@ namespace ProductAuthenticatorApp.Controllers
             _productService = productService;
             this.vehicleService = vehicleService;
         }
+
+
+        //Dashbourd  Get Method
         public IActionResult Index()
         {
             try
@@ -33,6 +39,34 @@ namespace ProductAuthenticatorApp.Controllers
             {
                 Console.WriteLine($"Error retrieving vehicles: {ex.Message}");
                 return View("Error", new { message = "Unable to retrieve vehicles." });
+            }
+        }
+
+
+
+        //View Leases
+        public IActionResult ViewLeases()
+        {
+            try
+            {
+                var userId = _userManager.GetUserId(User);
+                var leases = _dbContext.Leases
+                    .Include(l => l.Vehicle)
+                    .ThenInclude(v => v.Branch)
+                    .Include(l => l.Driver)
+                    .Where(l => l.ClientUserId == userId)
+                    .OrderByDescending(l => l.RequestDate)
+                    .ToList();
+
+                ViewBag.leases = leases;
+
+                return View(leases);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message, "Error retrieving leases");
+                throw new Exception("Unable to retrieve leases", ex);
+
             }
         }
     }

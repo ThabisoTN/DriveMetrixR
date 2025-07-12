@@ -6,7 +6,7 @@ namespace ProductAuthenticatorApp.Services
     public interface IBranchService
     {
         Task<List<SelectListItem>> GetBranchSelectList();
-        Task<List<Lease>> GetLeasesByBranch(int branchId);
+        //Task<List<Lease>> GetLeasesByBranch(int branchId);
         
 
     }
