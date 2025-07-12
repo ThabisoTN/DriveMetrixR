@@ -1,0 +1,19 @@
+﻿.card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-radius: 0.5rem;
+}
+
+    .card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    }
+
+.btn {
+    transition: all 0.2s ease;
+}
+
+.display-5 {
+    font-size: 2rem;
+    font-weight: 300;
+    line-height: 1.2;
+}

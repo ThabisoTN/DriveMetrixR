@@ -1,6 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Branch Manager Dashboard";
-    Layout = "_Layout"; // Ensure this matches your layout file name
+    Layout = "_Layout";
 }
 
 <!-- Main Content -->
@@ -31,28 +31,5 @@
 
    
 </div>
-
-<style>
-    .card {
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-        border-radius: 0.5rem;
-    }
-
-        .card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
-        }
-
-    .btn {
-        transition: all 0.2s ease;
-    }
-
-    .display-5 {
-        font-size: 2rem;
-        font-weight: 300;
-        line-height: 1.2;
-    }
-</style>
-
-@* Remove this if Font Awesome is already in your layout *@
+<link rel="stylesheet" href="~/css/BranchIndex.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />

@@ -140,7 +140,7 @@ namespace ProductAuthenticatorApp.Areas.Identity.Pages.Account
                         }
                         else
                         {
-                            return RedirectToAction("Index", "User");
+                            throw new Exception("User Has No Role.");
                         }
                     }
                         _logger.LogInformation("User logged in.");

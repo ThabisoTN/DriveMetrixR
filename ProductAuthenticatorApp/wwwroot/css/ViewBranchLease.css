@@ -1,0 +1,22 @@
+﻿.table th {
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+.badge {
+    font-size: 0.85em;
+    padding: 0.35em 0.65em;
+    min-width: 80px;
+}
+
+.status-select {
+    min-width: 120px;
+}
+
+.action-buttons {
+    white-space: nowrap;
+}

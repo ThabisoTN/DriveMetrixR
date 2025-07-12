@@ -1,4 +1,6 @@
 ﻿@model IEnumerable<ProductAuthenticatorApp.Data.Vehicle>
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
 
 <!DOCTYPE html>
 <html lang="en">
@@ -7,345 +9,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DriveMatrixR - Premium Vehicle Leasing</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --secondary: #f59e0b;
-            --dark: #1e293b;
-            --light: #f8fafc;
-            --gray: #94a3b8;
-        }
-
-        body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--light);
-            color: var(--dark);
-        }
-
-        .landing-container {
-            display: grid;
-            grid-template-columns: 1fr 1.5fr;
-            min-height: 100vh;
-        }
-
-        /* Left Panel - Branding */
-        .brand-panel {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            padding: 3rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .brand-content {
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            margin-bottom: 2rem;
-        }
-
-        .logo-icon {
-            font-size: 2.5rem;
-            margin-right: 1rem;
-            color: var(--secondary);
-        }
-
-        .logo-text {
-            font-size: 2rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-
-        .tagline {
-            font-size: 1.5rem;
-            font-weight: 300;
-            margin-bottom: 2rem;
-            line-height: 1.4;
-        }
-
-        .highlight {
-            font-weight: 600;
-            color: var(--secondary);
-        }
-
-        .features {
-            margin: 2.5rem 0;
-        }
-
-        .feature-item {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 1.5rem;
-        }
-
-        .feature-icon {
-            font-size: 1.2rem;
-            color: var(--secondary);
-            margin-right: 1rem;
-            margin-top: 0.2rem;
-        }
-
-        .feature-text h4 {
-            margin: 0 0 0.3rem 0;
-            font-weight: 600;
-        }
-
-        .feature-text p {
-            margin: 0;
-            opacity: 0.9;
-            font-size: 0.95rem;
-        }
-
-        .cta-button {
-            display: inline-block;
-            background-color: var(--secondary);
-            color: var(--dark);
-            padding: 0.8rem 1.8rem;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-
-            .cta-button:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            }
-
-        /* Right Panel - Vehicles */
-        .vehicles-panel {
-            padding: 3rem;
-            background-color: white;
-            overflow-y: auto;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-        }
-
-        .section-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--dark);
-        }
-
-        .search-container {
-            display: flex;
-            align-items: center;
-            background-color: var(--light);
-            border-radius: 50px;
-            padding: 0.5rem 1rem;
-            width: 300px;
-        }
-
-            .search-container input {
-                border: none;
-                background: transparent;
-                padding: 0.5rem;
-                width: 100%;
-                outline: none;
-            }
-
-            .search-container button {
-                background: transparent;
-                border: none;
-                color: var(--gray);
-                cursor: pointer;
-            }
-
-        .vehicle-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .vehicle-card {
-            background-color: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-            border: 1px solid #e2e8f0;
-        }
-
-            .vehicle-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            }
-
-        .vehicle-image {
-            height: 200px;
-            position: relative;
-            overflow: hidden;
-        }
-
-            .vehicle-image img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                transition: transform 0.5s ease;
-            }
-
-        .vehicle-card:hover .vehicle-image img {
-            transform: scale(1.05);
-        }
-
-        .no-image {
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #f1f5f9;
-            color: var(--gray);
-            font-size: 3rem;
-        }
-
-        .vehicle-badge {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background-color: rgba(37, 99, 235, 0.9);
-            color: white;
-            padding: 0.3rem 0.8rem;
-            border-radius: 50px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .vehicle-details {
-            padding: 1.5rem;
-        }
-
-        .vehicle-make-model {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: var(--dark);
-        }
-
-        .vehicle-specs {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 0.8rem;
-            font-size: 0.9rem;
-            color: var(--gray);
-        }
-
-            .vehicle-specs span {
-                display: flex;
-                align-items: center;
-            }
-
-            .vehicle-specs i {
-                margin-right: 0.3rem;
-                font-size: 0.8rem;
-            }
-
-        .vehicle-price {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 1rem;
-        }
-
-        .vehicle-location {
-            display: flex;
-            align-items: center;
-            font-size: 0.9rem;
-            color: var(--gray);
-            margin-bottom: 1.2rem;
-        }
-
-            .vehicle-location i {
-                margin-right: 0.5rem;
-            }
-
-        .view-details {
-            display: block;
-            text-align: center;
-            padding: 0.7rem;
-            background-color: var(--primary);
-            color: white;
-            text-decoration: none;
-            font-weight: 600;
-            border-radius: 6px;
-            transition: background-color 0.3s ease;
-        }
-
-            .view-details:hover {
-                background-color: var(--primary-dark);
-            }
-
-        /* Responsive Design */
-        @@media (max-width: 1024px) {
-            .landing-container
-
-        {
-            grid-template-columns: 1fr;
-        }
-
-        .brand-panel {
-            padding: 2rem;
-        }
-
-        .vehicles-panel {
-            padding: 2rem;
-        }
-
-        }
-
-        @@media (max-width: 768px) {
-            .vehicle-grid
-
-        {
-            grid-template-columns: 1fr;
-        }
-
-        .section-header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 1rem;
-        }
-
-        .search-container {
-            width: 100%;
-        }
-
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+   <link rel="stylesheet" href="~/css/Home.css" />
 </head>
 <body>
     <div class="landing-container">
         <!-- Left Brand Panel -->
         <div class="brand-panel">
             <div class="brand-content">
-    
+                <div class="logo">
+                    
+                </div>
+                <div class="tagline">
+                   
+                </div>
+                <div class="features">
+                    <div class="feature-item">
+                   
+                    </div>
+                    <div class="feature-item">
+                        
+                    </div>
+                    <div class="feature-item">
+                   
+                    </div>
+                </div>
+                @if ((await AuthorizationService.AuthorizeAsync(User, "Authenticated")).Succeeded)
+                {
+                    <a href="/Client/Index" class="cta-button">
+                        Go to Dashboard <i class="fas fa-arrow-right"></i>
+                    </a>
+                }
             </div>
         </div>
 
         <!-- Right Vehicles Panel -->
         <div class="vehicles-panel">
-            <div class="section-header">
-                <h2 class="section-title">Available Vehicles</h2>
-                <div class="search-container">
-                    <input type="text" placeholder="Search vehicles...">
-                    <button type="submit"><i class="fas fa-search"></i></button>
-                </div>
-            </div>
 
             <div class="vehicle-grid">
                 @foreach (var vehicle in Model)
@@ -368,25 +67,34 @@
                         <div class="vehicle-details">
                             <h3 class="vehicle-make-model">@vehicle.Make @vehicle.Model</h3>
 
-                        @*     <div class="vehicle-specs">
-                                <span><i class="fas fa-palette"></i> @vehicle.Color</span>
-                                <span><i class="fas fa-tachometer-alt"></i> @(vehicle.Mileage?.ToString() ?? "N/A") mi</span>
-                            </div> *@
-
                             <div class="vehicle-price">@vehicle.LeasingPrice.ToString("C")<span style="font-size: 0.8rem; color: var(--gray);">/month</span></div>
 
                             <div class="vehicle-location">
                                 <i class="fas fa-map-marker-alt"></i> @vehicle.Branch?.Name
                             </div>
 
-                            <a asp-controller="Home" asp-action="Details" asp-route-id="@vehicle.VehicleId" class="view-details">
-                                View Details <i class="fas fa-chevron-right"></i>
-                            </a>
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Authenticated")).Succeeded)
+                            {
+                                <a asp-controller="Home" asp-action="Details" asp-route-id="@vehicle.VehicleId" class="view-details">
+                                    View Details <i class="fas fa-chevron-right"></i>
+                                </a>
+                            }
+                            else
+                            {
+                                <button class="view-details" onclick="showLoginAlert()">
+                                    View Details <i class="fas fa-chevron-right"></i>
+                                </button>
+                            }
                         </div>
                     </div>
                 }
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/js/Home.js">
+        
+    </script>
 </body>
 </html>

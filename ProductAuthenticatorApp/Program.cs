@@ -27,6 +27,11 @@ builder.Services.AddScoped<IVehicleService, VehicleService>();
 builder.Services.AddScoped<IBranchService, BranchService >();
 builder.Services.AddScoped<ILeaseService, LeaseService>();
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Authenticated", policy =>
+        policy.RequireAuthenticatedUser());
+});
 
 
 builder.Services.AddControllersWithViews();
@@ -59,7 +64,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
